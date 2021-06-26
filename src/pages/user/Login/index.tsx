@@ -53,31 +53,30 @@ const Login: React.FC = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      const msg = await login({ ...values });
+      if (msg.success === true) {
         const defaultloginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
+        localStorage.setItem('access_token', msg.data?.access_token ? msg.data.access_token : '');
         message.success(defaultloginSuccessMessage);
         await fetchUserInfo();
         goto();
         return;
       }
-      // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
     } catch (error) {
+      // 如果失败去设置用户错误信息
+      setUserLoginState(error.data);
       const defaultloginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
         defaultMessage: '登录失败，请重试！',
       });
-
       message.error(defaultloginFailureMessage);
     }
     setSubmitting(false);
   };
-  const { status, type: loginType } = userLoginState;
-
+  const { success } = userLoginState;
   return (
     <div className={styles.container}>
       <div className={styles.lang} data-lang>
@@ -95,7 +94,6 @@ const Login: React.FC = () => {
             {intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           </div>
         </div>
-
         <div className={styles.main}>
           <ProForm
             initialValues={{
@@ -130,15 +128,7 @@ const Login: React.FC = () => {
                 })}
               />
             </Tabs>
-
-            {status === 'error' && loginType === 'account' && (
-              <LoginMessage
-                content={intl.formatMessage({
-                  id: 'pages.login.accountLogin.errorMessage',
-                  defaultMessage: '账户或密码错误（admin/ant.design)',
-                })}
-              />
-            )}
+            {!success && userLoginState.error && <LoginMessage content="错误的用户名或者密码" />}
             {type === 'account' && (
               <>
                 <ProFormText
@@ -147,10 +137,6 @@ const Login: React.FC = () => {
                     size: 'large',
                     prefix: <UserOutlined className={styles.prefixIcon} />,
                   }}
-                  placeholder={intl.formatMessage({
-                    id: 'pages.login.username.placeholder',
-                    defaultMessage: '用户名: admin or user',
-                  })}
                   rules={[
                     {
                       required: true,
@@ -169,10 +155,6 @@ const Login: React.FC = () => {
                     size: 'large',
                     prefix: <LockOutlined className={styles.prefixIcon} />,
                   }}
-                  placeholder={intl.formatMessage({
-                    id: 'pages.login.password.placeholder',
-                    defaultMessage: '密码: ant.design',
-                  })}
                   rules={[
                     {
                       required: true,
