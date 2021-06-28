@@ -55,12 +55,12 @@ const Login: React.FC = () => {
       // 登录
       const msg = await login({ ...values });
       if (msg.success === true) {
-        const defaultloginSuccessMessage = intl.formatMessage({
+        const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         localStorage.setItem('access_token', msg.data?.access_token ? msg.data.access_token : '');
-        message.success(defaultloginSuccessMessage);
+        message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         goto();
         return;
@@ -79,9 +79,7 @@ const Login: React.FC = () => {
   const { success } = userLoginState;
   return (
     <div className={styles.container}>
-      <div className={styles.lang} data-lang>
-        {SelectLang && <SelectLang />}
-      </div>
+      <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
       <div className={styles.content}>
         <div className={styles.top}>
           <div className={styles.header}>
