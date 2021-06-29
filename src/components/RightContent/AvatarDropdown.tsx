@@ -18,6 +18,7 @@ const loginOut = async () => {
   await outLogin();
   const { query = {}, pathname } = history.location;
   const { redirect } = query;
+  localStorage.removeItem('access_token');
   // Note: There may be security issues, please note
   if (window.location.pathname !== '/user/login' && !redirect) {
     history.replace({
@@ -32,7 +33,7 @@ const loginOut = async () => {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
-  const onMenuClick = useCallback(
+  const onMenuClick: any = useCallback(
     (event: {
       key: React.Key;
       keyPath: React.Key[];
@@ -72,6 +73,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     return loading;
   }
 
+  // @ts-ignore
   const menuHeaderDropdown = (
     <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
       {menu && (
