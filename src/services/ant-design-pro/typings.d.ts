@@ -30,6 +30,44 @@ declare namespace API {
     pageSize?: number;
   };
 
+  type Links = {
+    self: {
+      href: string;
+    };
+    first: {
+      href: string;
+    };
+    last: {
+      href: string;
+    };
+  };
+
+  type Pagination = {
+    totalCount: number;
+    pageCount: number;
+    currentPage: number;
+    prePage: number;
+  };
+
+  type MemberListItem = {
+    id?: number;
+    type?: number;
+    type_formatted?: string;
+    avatar?: string;
+    username?: string;
+    created_at?: number;
+    mobile_phone?: string;
+  };
+
+  type MemberList = {
+    success: boolean;
+    data?: {
+      items: MemberListItem[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
   type RuleListItem = {
     key?: number;
     disabled?: boolean;
