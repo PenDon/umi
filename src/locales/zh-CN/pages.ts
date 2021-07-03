@@ -29,6 +29,7 @@ export default {
   'pages.admin.subPage.title': ' 这个页面只有 admin 权限才能查看',
   'pages.admin.subPage.alertMessage': 'umi ui 现已发布，欢迎使用 npm run ui 启动体验。',
   'pages.searchTable.createForm.newMember': '新建用户',
+  'pages.searchTable.createForm.newRule': '新建用户',
   'pages.searchTable.updateForm.ruleConfig': '规则配置',
   'pages.searchTable.updateForm.basicConfig': '基本信息',
   'pages.searchTable.updateForm.ruleName.nameLabel': '规则名称',

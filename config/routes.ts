@@ -49,6 +49,12 @@
       },
     ],
   },
+  // {
+  //   name: 'TableList',
+  //   icon: 'list',
+  //   path: '/table-list',
+  //   component: './TableList',
+  // },
   {
     name: 'shop',
     icon: 'shop',
@@ -64,6 +70,27 @@
         path: '/shop/orders',
         component: './shop/orders',
       },
+      {
+        name: 'orderBatch',
+        path: '/shop/order-batch',
+        component: './shop/orderBatch',
+      },
+      {
+        name: 'orders',
+        path: '/shop/products',
+        component: './shop/products',
+      },
+
+      // {
+      //   name: 'orders',
+      //   path: '/shop/orders',
+      //   component: './shop/orders',
+      // },
+      // {
+      //   name: 'products',
+      //   path: '/shop/products',
+      //   component: './shop/products',
+      // },
     ],
   },
   {
