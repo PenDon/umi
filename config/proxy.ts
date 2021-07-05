@@ -7,8 +7,8 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'http://localhost:63341/index.php',
+    '/index.php/api/': {
+      target: 'http://localhost:63341',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },

@@ -17,7 +17,6 @@ import {
   removeOrder,
   importExcel,
   orders,
-  orderBatch,
 } from '@/services/ant-design-pro/api';
 
 /**
@@ -104,15 +103,6 @@ const handleRemove = async (selectedRows: API.Order[]) => {
   }
 };
 
-const orderBatchListRequest = async () => {
-  const response = await orderBatch({}, {}, {});
-
-  // @ts-ignore
-  return response?.data.map((value) => {
-    return { label: value.name, value: value.id };
-  });
-};
-
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -148,27 +138,9 @@ const TableList: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: '所属店铺',
-    //   dataIndex: ['order', 'shop_id'],
-    //   search: false,
-    // },
-
     {
-      // @todo 以valueEnum形式展示会比较好
       title: '所属批次',
-      dataIndex: 'batch_id',
-      renderFormItem: () => {
-        return (
-          <ProFormSelect
-            name="batch_id"
-            params={{}}
-            // valueType="select"
-            request={orderBatchListRequest}
-            placeholder="请选择一个"
-          />
-        );
-      },
+      dataIndex: ['batch', 'name'],
     },
     // {
     //   title: '是否打面单',
@@ -189,12 +161,11 @@ const TableList: React.FC = () => {
     {
       title: '收货人姓名',
       dataIndex: 'consignee_name',
-      search: false,
+      hideInTable: true,
     },
     {
       title: '产品名称',
       dataIndex: 'product_name',
-      search: false,
     },
     // {
     //   title: '补发性质',
@@ -239,19 +210,49 @@ const TableList: React.FC = () => {
       sorter: true,
     },
     {
+      title: '当前步骤',
+      dataIndex: ['batch', 'stepDetails'],
+      search: false,
+      renderText: (details: any) => {
+        if (!details.length) {
+          return '没有安排';
+        }
+        // eslint-disable-next-line no-restricted-syntax
+        for (const detail of details) {
+          if (detail.status !== 3) {
+            if (detail.status === 2) {
+              return `已完成${detail.stepName}`;
+            }
+
+            if (detail.status === 1) {
+              return `正在${detail.stepName}`;
+            }
+
+            if (detail.status === 0) {
+              return `待${detail.stepName}`;
+            }
+          }
+        }
+        return '无';
+      },
+    },
+    {
       title: '收货人国家',
       dataIndex: 'country',
       search: false,
+      hideInTable: true,
     },
     {
       title: '买家Email',
       dataIndex: 'email',
       search: false,
+      hideInTable: true,
     },
     {
       title: 'SKU',
       dataIndex: 'sku',
       search: false,
+      hideInTable: true,
     },
     {
       title: '创建人',
@@ -274,7 +275,50 @@ const TableList: React.FC = () => {
       title: '备注',
       dataIndex: 'remark',
       search: false,
+      // hideInTable: true,
+    },
+    {
+      title: '步骤详情',
+      dataIndex: ['batch', 'stepDetails'],
+      search: false,
       hideInTable: true,
+      renderText: (details: any) => {
+        const detailColumns = [
+          {
+            title: '步骤名称',
+            dataIndex: 'stepName',
+          },
+          {
+            title: '状态',
+            dataIndex: 'status',
+          },
+          {
+            title: '安排时间',
+            dataIndex: 'created_at',
+            renderText: (text: number) => {
+              return text * 1000;
+            },
+            valueType: 'dateTime',
+          },
+          {
+            title: '安排人',
+            dataIndex: 'creator',
+          },
+          {
+            title: '被安排人',
+            dataIndex: 'arranged',
+          },
+        ];
+        return (
+          <ProTable
+            pagination={false}
+            toolBarRender={false}
+            search={false}
+            columns={detailColumns}
+            dataSource={details}
+          />
+        );
+      },
     },
     // {
     //   title: '附加图片',

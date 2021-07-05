@@ -94,6 +94,7 @@ declare namespace API {
   type Order = {
     id?: number;
     order_number?: string;
+    batch?: string;
     batch_id?: number;
     country?: string;
     consignee_name?: string;
@@ -115,7 +116,7 @@ declare namespace API {
     name?: string;
     process?: string;
     quantity?: number;
-    stepDetails?: object;
+    stepDetails?: list;
     remark?: string;
     created_at?: number;
     creator?: string;

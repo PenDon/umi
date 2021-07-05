@@ -1,5 +1,5 @@
 // import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Drawer, Table } from 'antd';
+import { Button, message, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
 import { FormattedMessage } from 'umi';
 // import { useIntl, FormattedMessage } from 'umi';
@@ -170,15 +170,15 @@ const TableList: React.FC = () => {
         for (const detail of details) {
           if (detail.status !== 3) {
             if (detail.status === 2) {
-              return `已完成${detail.step.name}`;
+              return `已完成${detail.stepName}`;
             }
 
             if (detail.status === 1) {
-              return `正在${detail.step.name}`;
+              return `正在${detail.stepName}`;
             }
 
             if (detail.status === 0) {
-              return `待${detail.step.name}`;
+              return `待${detail.stepName}`;
             }
           }
         }
@@ -284,8 +284,20 @@ const TableList: React.FC = () => {
             title: '安排人',
             dataIndex: 'creator',
           },
+          {
+            title: '被安排人',
+            dataIndex: 'arranged',
+          },
         ];
-        return <Table columns={detailColumns} dataSource={details} />;
+        return (
+          <ProTable
+            pagination={false}
+            toolBarRender={false}
+            search={false}
+            columns={detailColumns}
+            dataSource={details}
+          />
+        );
       },
     },
     {
@@ -294,10 +306,7 @@ const TableList: React.FC = () => {
       valueType: 'option',
       render: (_, record) => {
         let disabled = true;
-        // @ts-ignore
-        console.log(record.stepDetails.length);
-        // @ts-ignore
-        if (record.stepDetails.length === 0) {
+        if (record.stepDetails && record.stepDetails.length === 0) {
           disabled = false;
         }
         return [

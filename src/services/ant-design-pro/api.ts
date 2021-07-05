@@ -3,16 +3,16 @@
 // @ts-ignore
 import { request } from 'umi';
 
-/** 此处后端没有提供注释 GET /api/notices */
+/** 此处后端没有提供注释 GET /index.php/api/notices */
 export async function getNotices(options?: { [key: string]: any }) {
-  return request<API.NoticeIconList>('/api/notices', {
+  return request<API.NoticeIconList>('/index.php/api/notices', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
 //  规则API
-/** 获取规则列表 GET /api/rule */
+/** 获取规则列表 GET /index.php/api/rule */
 export async function rule(
   params: {
     // query
@@ -23,7 +23,7 @@ export async function rule(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.RuleList>('/api/rule', {
+  return request<API.RuleList>('/index.php/api/rule', {
     method: 'GET',
     params: {
       ...params,
@@ -32,25 +32,25 @@ export async function rule(
   });
 }
 
-/** 新建规则 PUT /api/rule */
+/** 新建规则 PUT /index.php/api/rule */
 export async function updateRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.RuleListItem>('/index.php/api/rule', {
     method: 'PUT',
     ...(options || {}),
   });
 }
 
-/** 新建规则 POST /api/rule */
+/** 新建规则 POST /index.php/api/rule */
 export async function addRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.RuleListItem>('/index.php/api/rule', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 删除规则 DELETE /api/rule */
+/** 删除规则 DELETE /index.php/api/rule */
 export async function removeRule(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/rule', {
+  return request<Record<string, any>>('/index.php/api/rule', {
     method: 'DELETE',
     ...(options || {}),
   });
@@ -58,25 +58,25 @@ export async function removeRule(options?: { [key: string]: any }) {
 
 //  用户API
 
-/** 获取当前的用户 GET /api/currentUser */
+/** 获取当前的用户 GET /index.php/api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<API.CurrentUser>('/api/account/view', {
+  return request<API.CurrentUser>('/index.php/api/account/view', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 退出登录接口 POST /api/login/outLogin */
+/** 退出登录接口 POST /index.php/api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/passport/logout', {
+  return request<Record<string, any>>('/index.php/api/passport/logout', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 登录接口 POST /api/login/account */
+/** 登录接口 POST /index.php/api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/passport/login', {
+  return request<API.LoginResult>('/index.php/api/passport/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
   });
 }
 
-/** 获取用户列表 GET /api/member/index */
+/** 获取用户列表 GET /index.php/api/member/index */
 export async function members(
   params: {
     // query
@@ -109,7 +109,7 @@ export async function members(
       break;
     }
   }
-  const response = await request<API.MemberList>('/api/member/index', {
+  const response = await request<API.MemberList>('/index.php/api/member/index', {
     method: 'GET',
     params: {
       ...params,
@@ -125,33 +125,33 @@ export async function members(
 }
 
 // @todo 修改为传递数据data
-/** 修改用户 PUT /api/member/update */
+/** 修改用户 PUT /index.php/api/member/update */
 export async function updateMember(options?: { [key: string]: any }) {
-  return request<API.MemberListItem>('/api/member/update', {
+  return request<API.MemberListItem>('/index.php/api/member/update', {
     method: 'PUT',
     ...(options || {}),
   });
 }
 
-/** 新建用户 POST /api/member/create */
+/** 新建用户 POST /index.php/api/member/create */
 export async function addMember(options?: { [key: string]: any }) {
-  return request<API.MemberListItem>('/api/member/create', {
+  return request<API.MemberListItem>('/index.php/api/member/create', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 删除用户 POST /api/member/delete */
+/** 删除用户 POST /index.php/api/member/delete */
 export async function removeMember(params?: { ids: string }) {
   console.log(params);
-  return request<Record<string, any>>('/api/member/delete', {
+  return request<Record<string, any>>('/index.php/api/member/delete', {
     method: 'POST',
     params: { ...params },
   });
 }
 
 // //  补发订单API
-// /** 获取补发订单列表 GET /api/reissue/default/index */
+// /** 获取补发订单列表 GET /index.php/api/reissue/default/index */
 // export async function reissueOrders(
 //   params: {
 //     // query
@@ -174,7 +174,7 @@ export async function removeMember(params?: { ids: string }) {
 //       break;
 //     }
 //   }
-//   const response = await request<API.ReissueOrderList>('/api/reissue/default/index', {
+//   const response = await request<API.ReissueOrderList>('/index.php/api/reissue/default/index', {
 //     method: 'GET',
 //     params: {
 //       ...params, ...sortObj,
@@ -188,33 +188,33 @@ export async function removeMember(params?: { ids: string }) {
 //   };
 // }
 
-/** 修改补发订单 POST /api/member/update */
+/** 修改补发订单 POST /index.php/api/member/update */
 export async function updateReissueOrder(options?: { [key: string]: any }) {
-  return request<API.ReissueOrderItem>('/api/reissue/default/update', {
+  return request<API.ReissueOrderItem>('/index.php/api/reissue/default/update', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 新建补发订单 POST /api/member/create */
+/** 新建补发订单 POST /index.php/api/member/create */
 export async function addReissueOrder(params?: object) {
   console.log('???????????');
-  return request<API.ReissueOrderItem>('/api/reissue/default/create', {
+  return request<API.ReissueOrderItem>('/index.php/api/reissue/default/create', {
     method: 'POST',
     data: { ...params },
   });
 }
 
-/** 删除补发订单 POST /api/reissue/default/delete */
+/** 删除补发订单 POST /index.php/api/reissue/default/delete */
 export async function removeReissueOrder(params: { ids: string }) {
-  return request<Record<string, any>>('/api/reissue/default/delete', {
+  return request<Record<string, any>>('/index.php/api/reissue/default/delete', {
     method: 'POST',
     params: { ...params },
   });
 }
 
 // 订单API
-/** 获取订单列表 GET /api/erp/order/index */
+/** 获取订单列表 GET /index.php/api/erp/order/index */
 export async function orders(
   params: {
     // query
@@ -234,7 +234,7 @@ export async function orders(
       break;
     }
   }
-  const response = await request<API.OrderList>('/api/erp/orders/index', {
+  const response = await request<API.OrderList>('/index.php/api/erp/orders/index', {
     method: 'GET',
     params: {
       ...params,
@@ -249,40 +249,40 @@ export async function orders(
   };
 }
 
-/** 修改订单 POST /api/member/update */
+/** 修改订单 POST /index.php/api/member/update */
 export async function updateOrder(options?: { [key: string]: any }) {
-  return request<API.Order>('/api/erp/order/update', {
+  return request<API.Order>('/index.php/api/erp/order/update', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 新建订单 POST /api/erp/order/create */
+/** 新建订单 POST /index.php/api/erp/order/create */
 export async function addOrder(params?: object) {
-  return request<API.Order>('/api/erp/order/create', {
+  return request<API.Order>('/index.php/api/erp/order/create', {
     method: 'POST',
     data: { ...params },
   });
 }
 
-/** 导入订单Excel POST /api/erp/order/import-excel */
+/** 导入订单Excel POST /index.php/api/erp/order/import-excel */
 export async function importExcel(params?: object) {
-  return request<API.Order>('/api/erp/order/import-excel', {
+  return request<API.Order>('/index.php/api/erp/order/import-excel', {
     method: 'POST',
     data: { ...params },
   });
 }
 
-/** 删除订单 POST /api/erp/order/delete */
+/** 删除订单 POST /index.php/api/erp/order/delete */
 export async function removeOrder(params: { ids: string }) {
-  return request<Record<string, any>>('/api/erp/order/delete', {
+  return request<Record<string, any>>('/index.php/api/erp/order/delete', {
     method: 'POST',
     params: { ...params },
   });
 }
 
 // 订单批次API
-/** 获取订单列表 GET /api/erp/order-batch/index */
+/** 获取订单列表 GET /index.php/api/erp/order-batch/index */
 export async function orderBatch(
   params: {
     // query
@@ -302,7 +302,7 @@ export async function orderBatch(
       break;
     }
   }
-  const response = await request<API.OrderBatchList>('/api/erp/order-batch/index', {
+  const response = await request<API.OrderBatchList>('/index.php/api/erp/order-batch/index', {
     method: 'GET',
     params: {
       ...params,
@@ -317,33 +317,33 @@ export async function orderBatch(
   };
 }
 
-// /** 修改订单 POST /api/erp/order-batch/update */
+// /** 修改订单 POST /index.php/api/erp/order-batch/update */
 // export async function updatOrderBatch(options?: { [key: string]: any }) {
-//   return request<API.ReissueOrderItem>('/api/erp/order-batch/update', {
+//   return request<API.ReissueOrderItem>('/index.php/api/erp/order-batch/update', {
 //     method: 'POST',
 //     ...(options || {}),
 //   });
 // }
 
-/** 修改订单 POST /api/erp/order-batch/update */
+/** 修改订单 POST /index.php/api/erp/order-batch/update */
 export async function updateOrderBatch(options?: { [key: string]: any }) {
-  return request<API.ReissueOrderItem>('/api/erp/order-batch/update', {
+  return request<API.ReissueOrderItem>('/index.php/api/erp/order-batch/update', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 新建订单 POST /api/erp/order-batch/create */
+/** 新建订单 POST /index.php/api/erp/order-batch/create */
 export async function addOrderBatch(params?: object) {
-  return request<API.ReissueOrderItem>('/api/erp/order-batch/create', {
+  return request<API.ReissueOrderItem>('/index.php/api/erp/order-batch/create', {
     method: 'POST',
     data: { ...params },
   });
 }
 
-/** 删除订单 POST /api/erp/order-batch/delete */
+/** 删除订单 POST /index.php/api/erp/order-batch/delete */
 export async function removeOrderBatch(params: { ids: string }) {
-  return request<Record<string, any>>('/api/erp/order-batch/delete', {
+  return request<Record<string, any>>('/index.php/api/erp/order-batch/delete', {
     method: 'POST',
     params: { ...params },
   });
