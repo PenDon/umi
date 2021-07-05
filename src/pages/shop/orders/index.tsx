@@ -218,19 +218,18 @@ const TableList: React.FC = () => {
           return '没有安排';
         }
         // eslint-disable-next-line no-restricted-syntax
-        for (const detail of details) {
-          if (detail.status !== 3) {
-            if (detail.status === 2) {
-              return `已完成${detail.stepName}`;
-            }
+        const detail = details[0];
+        if (detail.status !== 3) {
+          if (detail.status === 2) {
+            return `已完成${detail.stepName}`;
+          }
 
-            if (detail.status === 1) {
-              return `正在${detail.stepName}`;
-            }
+          if (detail.status === 1) {
+            return `正在${detail.stepName}`;
+          }
 
-            if (detail.status === 0) {
-              return `待${detail.stepName}`;
-            }
+          if (detail.status === 0) {
+            return `待${detail.stepName}`;
           }
         }
         return '无';
@@ -291,6 +290,18 @@ const TableList: React.FC = () => {
           {
             title: '状态',
             dataIndex: 'status',
+            renderText: (text: number, record: { status: number; stepName: string }) => {
+              if (text === 0) {
+                return `待${record.stepName}`;
+              }
+              if (text === 1) {
+                return `${record.stepName}中`;
+              }
+              if (text === 2) {
+                return `已完成${record.stepName}`;
+              }
+              return '未知';
+            },
           },
           {
             title: '安排时间',
@@ -307,6 +318,27 @@ const TableList: React.FC = () => {
           {
             title: '被安排人',
             dataIndex: 'arranged',
+          },
+          {
+            title: '完成时间',
+            dataIndex: 'updated_at',
+            renderText: (text: number, record: { status: number; stepName: string }) => {
+              if (record.status === 2) {
+                return text * 1000;
+              }
+              return null;
+            },
+            valueType: 'dateTime',
+          },
+          {
+            title: '完成人',
+            dataIndex: 'updater',
+            renderText: (text: string, record: { status: number; stepName: string }) => {
+              if (record.status === 2) {
+                return text;
+              }
+              return null;
+            },
           },
         ];
         return (
