@@ -38,11 +38,16 @@ export async function Process(
   };
 }
 
-/** 修改流程 POST /index.php/api/erp/process/update */
-export async function updateProcess(options?: { [key: string]: any }) {
+/** 修改流程 PUT /index.php/api/erp/process/update */
+export async function updateProcess(
+  params: { id: number | undefined },
+  options?: { [p: string]: any },
+) {
+  console.log(params);
   return request<API.Process>('/index.php/api/erp/process/update', {
-    method: 'POST',
-    ...(options || {}),
+    method: 'PUT',
+    params: { ...params },
+    data: { ...(options || {}) },
   });
 }
 

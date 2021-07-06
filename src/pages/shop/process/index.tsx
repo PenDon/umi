@@ -45,11 +45,14 @@ const handleAdd = async (fields: API.Process) => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateProcess({
-      name: fields.name,
-      remark: fields.remark,
-      steps: fields.steps,
-    });
+    await updateProcess(
+      { id: fields.id },
+      {
+        name: fields.name,
+        remark: fields.remark,
+        steps: fields.steps,
+      },
+    );
     hide();
 
     message.success('配置成功');
