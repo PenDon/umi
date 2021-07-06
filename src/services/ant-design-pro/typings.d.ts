@@ -230,4 +230,31 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+
+  // process
+  type ProcessList = {
+    success: boolean;
+    data?: {
+      items: Process[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type Process = {
+    id?: number;
+    name?: string;
+    steps?: Step[];
+    remark?: string;
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  };
+
+  type Step = {
+    name?: string;
+    id?: number;
+    sort: number;
+  };
 }

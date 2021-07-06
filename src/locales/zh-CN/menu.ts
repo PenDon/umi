@@ -25,7 +25,7 @@ export default {
   'menu.shop.reissueOrders': '补发订单管理',
   'menu.shop.orders': '订单管理',
   'menu.shop.orderBatch': '订单批次管理',
-  'menu.shop.products': '产品管理',
+  'menu.shop.process': '流程管理',
   'menu.list': '列表页',
   'menu.shop': '店铺页',
   'menu.list.table-list': '查询表格',

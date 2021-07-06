@@ -193,6 +193,11 @@ const TableList: React.FC = () => {
       title: '产品规格',
       dataIndex: 'custom_info',
       search: false,
+
+      //  处理换行
+      render: (dom) => {
+        return <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>;
+      },
     },
     {
       title: '产品数量',

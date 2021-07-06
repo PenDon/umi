@@ -76,9 +76,9 @@
         component: './shop/orderBatch',
       },
       {
-        name: 'orders',
-        path: '/shop/products',
-        component: './shop/products',
+        name: 'process',
+        path: '/shop/process',
+        component: './shop/process',
       },
 
       // {

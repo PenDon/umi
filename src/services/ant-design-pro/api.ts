@@ -282,7 +282,7 @@ export async function removeOrder(params: { ids: string }) {
 }
 
 // 订单批次API
-/** 获取订单列表 GET /index.php/api/erp/order-batch/index */
+/** 获取订单批次列表 GET /index.php/api/erp/order-batch/index */
 export async function orderBatch(
   params: {
     // query
@@ -317,31 +317,23 @@ export async function orderBatch(
   };
 }
 
-// /** 修改订单 POST /index.php/api/erp/order-batch/update */
-// export async function updatOrderBatch(options?: { [key: string]: any }) {
-//   return request<API.ReissueOrderItem>('/index.php/api/erp/order-batch/update', {
-//     method: 'POST',
-//     ...(options || {}),
-//   });
-// }
-
-/** 修改订单 POST /index.php/api/erp/order-batch/update */
+/** 修改订单批次 POST /index.php/api/erp/order-batch/update */
 export async function updateOrderBatch(options?: { [key: string]: any }) {
-  return request<API.ReissueOrderItem>('/index.php/api/erp/order-batch/update', {
+  return request<API.OrderBatch>('/index.php/api/erp/order-batch/update', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 新建订单 POST /index.php/api/erp/order-batch/create */
+/** 新建订单批次 POST /index.php/api/erp/order-batch/create */
 export async function addOrderBatch(params?: object) {
-  return request<API.ReissueOrderItem>('/index.php/api/erp/order-batch/create', {
+  return request<API.OrderBatch>('/index.php/api/erp/order-batch/create', {
     method: 'POST',
     data: { ...params },
   });
 }
 
-/** 删除订单 POST /index.php/api/erp/order-batch/delete */
+/** 删除订单批次 POST /index.php/api/erp/order-batch/delete */
 export async function removeOrderBatch(params: { ids: string }) {
   return request<Record<string, any>>('/index.php/api/erp/order-batch/delete', {
     method: 'POST',
