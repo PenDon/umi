@@ -140,7 +140,7 @@ const TableList: React.FC = () => {
     },
     {
       title: '所属批次',
-      dataIndex: ['batch', 'name'],
+      dataIndex: 'batch_name',
     },
     // {
     //   title: '是否打面单',

@@ -95,6 +95,7 @@ declare namespace API {
     id?: number;
     order_number?: string;
     batch?: string;
+    batch_name?: string;
     batch_id?: number;
     country?: string;
     consignee_name?: string;
