@@ -7,6 +7,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import React from 'react';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';

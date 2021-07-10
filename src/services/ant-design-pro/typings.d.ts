@@ -94,7 +94,7 @@ declare namespace API {
   type Order = {
     id?: number;
     order_number?: string;
-    batch?: string;
+    batch?: OrderBatch;
     batch_name?: string;
     batch_id?: number;
     country?: string;
@@ -117,12 +117,32 @@ declare namespace API {
     name?: string;
     process?: string;
     quantity?: number;
-    stepDetails?: list;
+    orderBatchSteps: OrderBatchStep[];
+    stepDetails: [];
     remark?: string;
     created_at?: number;
     creator?: string;
     updated_at?: number;
     updater?: string;
+  };
+
+  type OrderBatchStep = {
+    id?: number;
+    key?: number;
+    step_id?: number;
+    order_batch_id?: number;
+    stepDetails?: StepDetail[];
+    status?: number;
+    created_at?: number;
+    creator: string;
+  };
+
+  type StepDetail = {
+    id?: number;
+    order_batch_step_id?: number;
+    type?: number;
+    created_at?: number;
+    creator: string;
   };
 
   type OrderList = {

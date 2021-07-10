@@ -19,6 +19,8 @@ const loginOut = async () => {
   const { query = {}, pathname } = history.location;
   const { redirect } = query;
   localStorage.removeItem('access_token');
+  localStorage.removeItem('user_id');
+  localStorage.removeItem('user_type');
   // Note: There may be security issues, please note
   if (window.location.pathname !== '/user/login' && !redirect) {
     history.replace({

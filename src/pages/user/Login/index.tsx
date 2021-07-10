@@ -60,6 +60,10 @@ const Login: React.FC = () => {
           defaultMessage: '登录成功！',
         });
         localStorage.setItem('access_token', msg.data?.access_token ? msg.data.access_token : '');
+        // @ts-ignore
+        localStorage.setItem('user_id', msg.data?.id);
+        // @ts-ignore
+        localStorage.setItem('user_type', msg.data?.type);
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         goto();

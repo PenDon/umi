@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Input, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
+// @ts-ignore
 import { useIntl, FormattedMessage } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';

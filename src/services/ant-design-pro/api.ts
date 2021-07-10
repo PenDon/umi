@@ -234,7 +234,7 @@ export async function orders(
       break;
     }
   }
-  const response = await request<API.OrderList>('/index.php/api/erp/orders/index', {
+  const response = await request<API.OrderList>('/index.php/api/erp/order/index', {
     method: 'GET',
     params: {
       ...params,
@@ -247,6 +247,11 @@ export async function orders(
     success: response.success,
     total: response.data?._meta.totalCount,
   };
+}
+
+/** 步骤列表 GET /index.php/api/member/update */
+export async function stepList() {
+  return request<any>('/index.php/api/erp/order/step-list');
 }
 
 /** 修改订单 POST /index.php/api/member/update */
@@ -337,6 +342,30 @@ export async function addOrderBatch(params?: object) {
 export async function removeOrderBatch(params: { ids: string }) {
   return request<Record<string, any>>('/index.php/api/erp/order-batch/delete', {
     method: 'POST',
+    params: { ...params },
+  });
+}
+
+/** 订单批次安排下一步 POST /index.php/api/erp/order-batch/further-step */
+export async function batchFurtherStep(params?: object) {
+  return request<API.OrderBatch>('/index.php/api/erp/order-batch/further-step', {
+    method: 'POST',
+    data: { ...params },
+  });
+}
+
+/** 员工提交任务接口 POST /index.php/api/erp/order-batch/pick-up */
+export async function batchPickUp(params: { ids: string }) {
+  return request<Record<string, any>>('/index.php/api/erp/order-batch/pick-up', {
+    method: 'GET',
+    params: { ...params },
+  });
+}
+
+/** 审核接口 POST /index.php/api/erp/order-batch/pick-up */
+export async function batchCheck(params: { ids: string }) {
+  return request<Record<string, any>>('/index.php/api/erp/order-batch/check', {
+    method: 'GET',
     params: { ...params },
   });
 }

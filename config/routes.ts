@@ -38,7 +38,7 @@
   // },
   {
     name: 'admin',
-    icon: 'user',
+    icon: 'apartment',
     path: '/admin',
     routes: [
       {
@@ -56,41 +56,54 @@
   //   component: './TableList',
   // },
   {
-    name: 'shop',
-    icon: 'shop',
-    path: '/shop',
+    name: 'manage',
+    icon: 'group',
+    path: '/manage',
     routes: [
       // {
-      //   name: 'shops',
+      //   name: 'manages',
       //   path: '/admin/users',
-      //   component: './shop/index',
+      //   component: './manage/index',
       // },
       {
         name: 'orders',
-        path: '/shop/orders',
-        component: './shop/orders',
+        path: '/manage/orders',
+        component: './manage/orders',
       },
       {
         name: 'orderBatch',
-        path: '/shop/order-batch',
-        component: './shop/orderBatch',
+        path: '/manage/order-batch',
+        component: './manage/orderBatch',
       },
       {
         name: 'process',
-        path: '/shop/process',
-        component: './shop/process',
+        path: '/manage/process',
+        component: './manage/process',
       },
 
       // {
       //   name: 'orders',
-      //   path: '/shop/orders',
-      //   component: './shop/orders',
+      //   path: '/manage/orders',
+      //   component: './manage/orders',
       // },
       // {
       //   name: 'products',
-      //   path: '/shop/products',
-      //   component: './shop/products',
+      //   path: '/manage/products',
+      //   component: './manage/products',
       // },
+    ],
+  },
+  {
+    name: 'toDoList',
+    icon: 'user',
+    path: '/toDoList',
+    routes: [
+      {
+        name: 'orders',
+        // icon: 'user',
+        path: '/toDoList/orders',
+        component: './toDoList/orders',
+      },
     ],
   },
   {
