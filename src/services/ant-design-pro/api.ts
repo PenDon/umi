@@ -95,10 +95,7 @@ export async function members(
     /** 页面的容量 */
     pageSize?: number;
   },
-  sorter: {
-    type?: string;
-    created_at?: string;
-  },
+  sorter: {},
   options?: { [key: string]: any },
 ) {
   // 前端排序字段处理
@@ -198,7 +195,6 @@ export async function updateReissueOrder(options?: { [key: string]: any }) {
 
 /** 新建补发订单 POST /index.php/api/member/create */
 export async function addReissueOrder(params?: object) {
-  console.log('???????????');
   return request<API.ReissueOrderItem>('/index.php/api/reissue/default/create', {
     method: 'POST',
     data: { ...params },

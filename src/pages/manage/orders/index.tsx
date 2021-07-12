@@ -413,7 +413,7 @@ const TableList: React.FC = () => {
           label="文件上传"
           width="md"
           name="file"
-          action={'/api/file/uploading?access_token='.concat(
+          action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           )}
         />

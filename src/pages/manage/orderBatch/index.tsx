@@ -19,6 +19,7 @@ import {
   batchFurtherStep,
   batchPickUp,
   batchCheck,
+  members,
 } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
 
@@ -38,6 +39,24 @@ const handleAdd = async (fields: API.OrderBatch) => {
     hide();
     message.error('添加失败请重试！');
     return false;
+  }
+};
+
+/**
+ * 员工列表
+ *
+ */
+const memberList = async () => {
+  try {
+    const response = await members({}, {});
+    if (response.data) {
+      return response.data.map((value: API.MemberListItem) => {
+        return { label: `${value.username}-${value.type_formatted}`, value: value.id };
+      });
+    }
+    return [];
+  } catch (error) {
+    return [];
   }
 };
 
@@ -448,7 +467,7 @@ const TableList: React.FC = () => {
                   <Button
                     // @ts-ignore
                     type="danger"
-                    style={{ marginRight: 5 }}
+                    style={{ marginRight: 5, display: 'none' }}
                     onClick={async () => {
                       await handleRemove(selectedRowsState);
                       setSelectedRows([]);
@@ -476,7 +495,7 @@ const TableList: React.FC = () => {
                     // @ts-ignore
                     type="primary"
                     shape={'round'}
-                    style={{ marginRight: 5, display: checkVisible }}
+                    style={{ marginRight: 5 }}
                     key="pick-up"
                     onClick={async () => {
                       await handlePickUp(selectedRowsState);
@@ -602,7 +621,7 @@ const TableList: React.FC = () => {
           label="文件上传"
           width="md"
           name="file"
-          action={'/api/file/uploading?access_token='.concat(
+          action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           )}
         />
@@ -623,7 +642,13 @@ const TableList: React.FC = () => {
           }
         }}
       >
-        <ProFormText label="下一步负责人" width="md" name="arranged_id" />
+        <ProFormSelect
+          name="arranged_id"
+          label="下一步负责人"
+          request={memberList}
+          placeholder="请选择"
+          rules={[{ required: true, message: '请选择！' }]}
+        />
       </ModalForm>
       <ModalForm
         title="新建订单"
