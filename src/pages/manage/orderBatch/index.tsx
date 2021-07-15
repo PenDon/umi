@@ -1,7 +1,7 @@
 // import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Drawer, Timeline, Tag } from 'antd';
 import React, { useState, useRef } from 'react';
-// import { useIntl, FormattedMessage } from 'umi';
+// import { history } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
@@ -10,6 +10,7 @@ import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
+import { StatisticCard } from '@ant-design/pro-card';
 import {
   importExcel,
   orderBatch,
@@ -22,6 +23,7 @@ import {
   members,
 } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
+const { Operation } = StatisticCard;
 
 /**
  * 添加节点
@@ -54,7 +56,7 @@ const memberList = async () => {
         return { label: `${value.username}-${value.type_formatted}`, value: value.id };
       });
     }
-    return [];
+    return [] ;
   } catch (error) {
     return [];
   }
@@ -185,7 +187,9 @@ function renderTimeLine(row: API.OrderBatch | undefined) {
           return (
             <Timeline.Item key={detail.id} label={detail.created_at}>
               {name}
-              {detail.name} By {detail.username}
+              {detail.name} By <Tag color={'blue'} key={'username'}>{detail.username}</Tag> To {
+                detail.type == 0 && (<Tag color={'blue'} key={'arranged'}>{row.arranged}</Tag>)
+            }
             </Timeline.Item>
           );
         })}
@@ -193,6 +197,46 @@ function renderTimeLine(row: API.OrderBatch | undefined) {
     );
   }
   return '-';
+}
+
+function renderOrdersQuantity(data: readonly API.OrderBatch[]) {
+  let sum = 0
+  for (const d of data) {
+    if (d.quantity) {
+      sum += d.quantity
+    }
+  }
+  return (
+    <StatisticCard.Group>
+      <StatisticCard
+        statistic={{
+          title: '总单量',
+          value: sum,
+        }}
+      />
+      <Operation>=</Operation>
+      <StatisticCard
+        statistic={{
+          title: '散单',
+          value: 234,
+        }}
+      />
+      <Operation>+</Operation>
+      <StatisticCard
+        statistic={{
+          title: 'XXX单',
+          value: 112,
+        }}
+      />
+      <Operation>+</Operation>
+      <StatisticCard
+        statistic={{
+          title: 'YYY单',
+          value: 255,
+        }}
+      />
+    </StatisticCard.Group>
+  );
 }
 
 /**
@@ -236,6 +280,7 @@ const TableList: React.FC = () => {
   const [currentRow, setCurrentRow] = useState<API.OrderBatch>();
   const [selectedRowsState, setSelectedRows] = useState<API.OrderBatch[]>([]);
 
+
   // @ts-ignore
   // @ts-ignore
   /** 国际化配置 */
@@ -275,24 +320,28 @@ const TableList: React.FC = () => {
     },
     {
       title: '步骤',
-      dataIndex: 'orderBatchSteps',
+      dataIndex: ['step', 'name'],
       search: false,
-      renderText: (steps: any) => {
-        if (!steps.length) {
+      renderText: (text: any, record) => {
+        if (!text) {
           return <Tag color={'yellow'}>没有安排</Tag>;
         }
         // eslint-disable-next-line no-restricted-syntax
-        const step = steps[steps.length - 1];
-        if (step.status === 2) {
-          return <Tag color="green">已完成{step.step.name}</Tag>; //  审核通过  => 完成
-        }
+        const status = record.status;
 
-        if (step.status === 1) {
-          return <Tag color="blue">审核{step.step.name}中</Tag>;
-        }
+        if (status !== undefined) {
 
-        if (step.status === 0) {
-          return <Tag color="red">正在{step.step.name}</Tag>; //  安排了人 => 正在
+          if (status == 2) {
+            return <Tag color="green">已完成{text}</Tag>; //  审核通过  => 完成
+          }
+
+          if (status == 1) {
+            return <Tag color="blue">审核{text}中</Tag>;
+          }
+
+          if (status == 0) {
+            return <Tag color="red">正在{text}</Tag>; //  安排了人 => 正在
+          }
         }
 
         return '无';
@@ -370,11 +419,19 @@ const TableList: React.FC = () => {
     //                  width={50} />);
     //   },
     // },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'option',
-    //   valueType: 'option',
-    //   render: (_, record) => {
+    {
+      title: '操作',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => {
+        return [
+          <Button type={'link'}
+          href={`/#/manage/orders/${record.id}`}
+                  key={'redirect'}
+          >跳转</Button>
+        ]
+      }
+    }
     //     // stepDetails[len - 1]: 最新的一条步骤记录
     //
     //     // 下一步按钮是否可点击: 没有安排 或者 最新记录是已完成状态
@@ -447,6 +504,7 @@ const TableList: React.FC = () => {
     <PageContainer>
       <ProTable<API.OrderBatch, API.PageParams>
         headerTitle="订单列表"
+        footer={(data) => {return renderOrdersQuantity(data)}}
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -624,6 +682,7 @@ const TableList: React.FC = () => {
           action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           )}
+          fieldProps={{multiple: true}}
         />
       </ModalForm>
       <ModalForm

@@ -71,6 +71,10 @@
         component: './manage/orders',
       },
       {
+        path: '/manage/orders/:id',
+        component: './manage/orders',
+      },
+      {
         name: 'orderBatch',
         path: '/manage/order-batch',
         component: './manage/orderBatch',

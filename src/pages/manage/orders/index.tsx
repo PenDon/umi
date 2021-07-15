@@ -1,13 +1,30 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Drawer, Timeline } from 'antd';
+import {
+  Button,
+  message,
+  Drawer,
+  Timeline,
+  Tag,
+} from 'antd';
 import React, { useState, useRef } from 'react';
 // @ts-ignore
 import { FormattedMessage } from 'umi';
 // import { useIntl, FormattedMessage } from 'umi';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import {
+  PageContainer,
+  FooterToolbar,
+} from '@ant-design/pro-layout';
+import type {
+  ProColumns,
+  ActionType,
+} from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormSelect, ProFormUploadButton } from '@ant-design/pro-form';
+import {
+  ModalForm,
+  ProFormText,
+  ProFormSelect,
+  ProFormUploadButton,
+} from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
@@ -20,6 +37,10 @@ import {
   orders,
   stepList,
 } from '@/services/ant-design-pro/api';
+import {
+  // Link,
+  useParams,
+} from 'react-router-dom';
 
 /**
  * 添加节点
@@ -66,11 +87,10 @@ const handleImport = async (fields: { file: any }) => {
  */
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
+  console.log(fields)
   try {
-    await updateOrder({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
+    await updateOrder({id: fields.id}, {
+      custom_info: fields.custom_info,
     });
     hide();
 
@@ -119,7 +139,8 @@ function renderTimeLine(row: API.Order | undefined) {
             name = detail.type == 1 ? '提交' : '完成';
           }
           return (
-            <Timeline.Item key={detail.id} label={detail.created_at}>
+            <Timeline.Item key={detail.id}
+                           label={detail.created_at}>
               {name}
               {detail.name} By {detail.username}
             </Timeline.Item>
@@ -151,186 +172,236 @@ const TableList: React.FC = () => {
     return response.data;
   };
 
+  // @ts-ignore
+  const { id } = useParams();
+
   /** 国际化配置 */
-  // const intl = useIntl();
+    // const intl = useIntl();
 
   const columns: ProColumns<API.Order>[] = [
-    {
-      title: '订单号',
-      dataIndex: 'order_number',
-      sorter: true,
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
+      {
+        title: '订单号',
+        dataIndex: 'order_number',
+        sorter: true,
+        fixed: 'left',
+        width: 140,
+        render: (dom, entity) => {
+          return (
+            <a
+              onClick={() => {
+                setCurrentRow(entity);
+                setShowDetail(true);
+              }}
+            >
+              {dom}
+            </a>
+          );
+        },
       },
-    },
-    {
-      title: '所属批次',
-      dataIndex: 'batch_name',
-    },
-    // {
-    //   title: '是否打面单',
-    //   dataIndex: ['order', 'has_face_sheet'],
-    //   valueEnum: {
-    //     '': {
-    //       text: '全部',
-    //     },
-    //     0: {
-    //       text: '否',
-    //     },
-    //     1: {
-    //       text: '是',
-    //     },
-    //   },
-    //
-    // },
-    {
-      title: '收货人姓名',
-      dataIndex: 'consignee_name',
-      hideInTable: true,
-    },
-    {
-      title: '产品名称',
-      dataIndex: 'product_name',
-    },
-    // {
-    //   title: '补发性质',
-    //   dataIndex: 'type',
-    //   valueEnum: {
-    //     '': {
-    //       text: '全部',
-    //     },
-    //     0: {
-    //       text: '补发性质一',
-    //     },
-    //     1: {
-    //       text: '补发性质二',
-    //     },
-    //     2: {
-    //       text: '补发性质三',
-    //     },
-    //     3: {
-    //       text: '补发性质四',
-    //     },
-    //
-    //   },
-    // },
-    {
-      title: '产品规格',
-      dataIndex: 'custom_info',
-      search: false,
+      {
+        title: '所属批次',
+        dataIndex: 'batch_name',
+        fixed: 'left',
+      },
+      // {
+      //   title: '是否打面单',
+      //   dataIndex: ['order', 'has_face_sheet'],
+      //   valueEnum: {
+      //     '': {
+      //       text: '全部',
+      //     },
+      //     0: {
+      //       text: '否',
+      //     },
+      //     1: {
+      //       text: '是',
+      //     },
+      //   },
+      //
+      // },
+      {
+        title: '收货人姓名',
+        dataIndex: 'consignee_name',
+        hideInTable: true,
+      },
+      {
+        title: '产品名称',
+        dataIndex: 'product_name',
+        //  处理换行
+        render: (dom) => {
+          return <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>;
+        },
+      },
+      // {
+      //   title: '补发性质',
+      //   dataIndex: 'type',
+      //   valueEnum: {
+      //     '': {
+      //       text: '全部',
+      //     },
+      //     0: {
+      //       text: '补发性质一',
+      //     },
+      //     1: {
+      //       text: '补发性质二',
+      //     },
+      //     2: {
+      //       text: '补发性质三',
+      //     },
+      //     3: {
+      //       text: '补发性质四',
+      //     },
+      //
+      //   },
+      // },
+      {
+        title: '产品规格',
+        dataIndex: 'custom_info',
+        search: false,
 
-      //  处理换行
-      render: (dom) => {
-        return <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>;
+        //  处理换行
+        render: (dom) => {
+          return <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>;
+        },
       },
-    },
-    {
-      title: '产品数量',
-      dataIndex: 'product_quantity',
-      search: false,
-    },
-    {
-      title: '下单时间',
-      dataIndex: 'paid_at',
-      renderText: (text: number) => {
-        return text * 1000;
+      {
+        title: '产品数量',
+        dataIndex: 'product_quantity',
+        search: false,
       },
-      valueType: 'dateTime',
-      search: false,
-      sorter: true,
-    },
-    {
-      title: '当前步骤',
-      dataIndex: ['batch', 'orderBatchSteps'],
-      renderText: (details: any) => {
-        if (!details.length) {
-          return '没有安排';
-        }
-        // details[details.length - 1]: 最新的一条步骤记录
-        // eslint-disable-next-line no-restricted-syntax
-        const detail = details[details.length - 1];
-        if (detail.status === 2) {
-          return `已完成${detail.step.name}`;
-        }
+      {
+        title: '下单时间',
+        dataIndex: 'paid_at',
+        renderText: (text: number) => {
+          return text * 1000;
+        },
+        valueType: 'dateTime',
+        search: false,
+        sorter: true,
+      },
+      {
+        title: '当前步骤',
+        dataIndex: ['batch', 'step' , 'name'],
+        renderText: (text: any, record) => {
+          if (!text) {
+            return <Tag color={'yellow'}>没有安排</Tag>;
+          }
+          const batch = record.batch
+          if (batch) {
+            if (batch.status === 2) {
+              return <Tag color="green">已完成{text}</Tag>;
+            }
 
-        if (detail.status === 1) {
-          return `审核${detail.step.name}中`;
-        }
+            if (batch.status === 1) {
+              return <Tag color="blue">审核{text}中</Tag>;
+            }
 
-        if (detail.status === 0) {
-          return `正在${detail.step.name}`;
+            if (batch.status === 0) {
+              return <Tag color="red">正在{text}</Tag>;;
+            }
+          }
+          return '无';
+        },
+        renderFormItem: () => {
+          return (
+            <div>
+              <ProFormSelect name="step"
+                             params={{}}
+                             request={stepRequest} />
+              <ProFormSelect name="status"
+                             options={[
+                               {
+                                 value: 0,
+                                 label: '正在进行',
+                               },
+                               {
+                                 value: 1,
+                                 label: '审核中',
+                               },
+                               {
+                                 value: 2,
+                                 label: '完成',
+                               },
+                             ]}
+              />
+            </div>
+          );
+        },
+      },
+      {
+        title: '收货人国家',
+        dataIndex: 'country',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: '买家Email',
+        dataIndex: 'email',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: 'SKU',
+        dataIndex: 'sku',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: '创建人',
+        dataIndex: 'creator',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: '创建日期',
+        dataIndex: 'created_at',
+        sorter: true,
+        renderText: (text: number) => {
+          return text * 1000;
+        },
+        valueType: 'dateTime',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        search: false,
+        // hideInTable: true,
+      },
+
+      {
+        title: '操作',
+        dataIndex: 'option',
+        valueType: 'option',
+        render: (_, record) => {
+          return [
+            <Button type={'link'}
+                    key={'update'}
+                    onClick={() => {
+                      handleUpdateModalVisible(true);
+                      setCurrentRow(record);
+                    }}
+            >编辑</Button>
+          ]
         }
-        return '无';
       },
-      renderFormItem: () => {
-        return <ProFormSelect name="step" params={{}} request={stepRequest} />;
-      },
-    },
-    {
-      title: '收货人国家',
-      dataIndex: 'country',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: '买家Email',
-      dataIndex: 'email',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: 'SKU',
-      dataIndex: 'sku',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: '创建人',
-      dataIndex: 'creator',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: '创建日期',
-      dataIndex: 'created_at',
-      sorter: true,
-      renderText: (text: number) => {
-        return text * 1000;
-      },
-      valueType: 'dateTime',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      search: false,
-      // hideInTable: true,
-    },
-    // {
-    //   title: '附加图片',
-    //   dataIndex: 'image',
-    //   search: false,
-    //   renderText: (text) => {
-    //     return (<img src={text}
-    //                  width={50} />);
-    //   },
-    // },
-  ];
+      // {
+      //   title: '附加图片',
+      //   dataIndex: 'image',
+      //   search: false,
+      //   renderText: (text) => {
+      //     return (<img src={text}
+      //                  width={50} />);
+      //   },
+      // },
+    ];
 
   return (
     <PageContainer>
       <ProTable<API.Order, API.PageParams>
         headerTitle="订单列表"
+        scroll={{ x: 1500 }}
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -360,7 +431,16 @@ const TableList: React.FC = () => {
             导入Excel
           </Button>,
         ]}
-        request={orders}
+        // request={orders}
+        request={(params,
+                  sort,
+                  filter) => {
+          return orders({
+            ...params,
+            batch_id: id,
+          }, { ...sort }, { ...filter });
+        }
+        }
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -372,9 +452,11 @@ const TableList: React.FC = () => {
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="已选择" />{' '}
+              <FormattedMessage id="pages.searchTable.chosen"
+                                defaultMessage="已选择" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
+              <FormattedMessage id="pages.searchTable.item"
+                                defaultMessage="项" />
               &nbsp;&nbsp;
             </div>
           }
@@ -386,7 +468,8 @@ const TableList: React.FC = () => {
               actionRef.current?.reloadAndRest?.();
             }}
           >
-            <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="批量删除" />
+            <FormattedMessage id="pages.searchTable.batchDeletion"
+                              defaultMessage="批量删除" />
           </Button>
           {/* <Button type="primary"> */}
           {/*  <FormattedMessage id="pages.searchTable.batchApproval" */}
@@ -416,6 +499,7 @@ const TableList: React.FC = () => {
           action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           )}
+          fieldProps={{ multiple: true }}
         />
       </ModalForm>
       <ModalForm
@@ -469,10 +553,13 @@ const TableList: React.FC = () => {
           label="补发性质"
           name="type"
         />
-        <ProFormText label="补发原因及其他备注" width="md" name="remark" />
+        <ProFormText label="补发原因及其他备注"
+                     width="md"
+                     name="remark" />
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
+          console.log(value)
           const success = await handleUpdate(value);
           if (success) {
             handleUpdateModalVisible(false);

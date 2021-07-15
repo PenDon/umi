@@ -212,7 +212,7 @@ export async function removeReissueOrder(params: { ids: string }) {
 // 订单API
 /** 获取订单列表 GET /index.php/api/erp/order/index */
 export async function orders(
-  params: {
+  params: API.Order & {
     // query
     /** 当前的页码 */
     current?: number;
@@ -251,9 +251,11 @@ export async function stepList() {
 }
 
 /** 修改订单 POST /index.php/api/member/update */
-export async function updateOrder(options?: { [key: string]: any }) {
+export async function updateOrder(params: object, data: object, options?: { [key: string]: any }) {
   return request<API.Order>('/index.php/api/erp/order/update', {
-    method: 'POST',
+    method: 'PUT',
+    params: {...params},
+    data: {...data},
     ...(options || {}),
   });
 }

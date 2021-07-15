@@ -117,32 +117,24 @@ declare namespace API {
     name?: string;
     process?: string;
     quantity?: number;
-    orderBatchSteps: OrderBatchStep[];
-    stepDetails: [];
+    stepDetails: StepDetail[];
+    status?: number;
+    step_id?: number;
+    step?: Step;
     remark?: string;
+    arranged?: string;
     created_at?: number;
     creator?: string;
     updated_at?: number;
     updater?: string;
   };
 
-  type OrderBatchStep = {
-    id?: number;
-    key?: number;
-    step_id?: number;
-    order_batch_id?: number;
-    stepDetails?: StepDetail[];
-    status?: number;
-    created_at?: number;
-    creator: string;
-  };
-
   type StepDetail = {
     id?: number;
-    order_batch_step_id?: number;
+    name?: number;
     type?: number;
     created_at?: number;
-    creator: string;
+    username: string;
   };
 
   type OrderList = {
