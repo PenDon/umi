@@ -241,6 +241,7 @@ declare namespace API {
 
   type NoticeIconItem = {
     id?: string;
+    order_id?: string;
     extra?: string;
     key?: string;
     read?: boolean;

@@ -8,7 +8,10 @@ import { getNotices } from '@/services/ant-design-pro/api';
 import NoticeIcon from './NoticeIcon';
 import styles from './index.less';
 import React from 'react';
-import { read } from '@/services/ant-design-pro/notification';
+import {
+  clear,
+  read,
+} from '@/services/ant-design-pro/notification';
 
 export type GlobalHeaderRightProps = {
   fetchingNotices?: boolean;
@@ -78,9 +81,9 @@ const NoticeIconView = () => {
   const [notices, setNotices] = useState<API.NoticeIconItem[]>([]);
 
   useEffect(() => {
-    getNotices().then(({ data }) => setNotices(data || []))
+    getNotices({show: 1}).then(({ data }) => setNotices(data || []))
     let intervalId = setInterval(() => {
-      getNotices().then(({ data }) => setNotices(data || []))
+      getNotices({show: 1}).then(({ data }) => setNotices(data || []))
     }, 1000 * 30);
     return () => {
       clearInterval(intervalId);
@@ -106,17 +109,20 @@ const NoticeIconView = () => {
 
   };
 
-  const clearReadState = (title: string, key: string) => {
+  const clearReadState = async () => {
     setNotices(
       notices.map((item) => {
         const notice = { ...item };
-        if (notice.type === key) {
-          notice.read = true;
+        if (notice.read === true) {
+          return {};
         }
         return notice;
       }),
     );
-    message.success(`${'清空了'} ${title}`);
+    const response = await clear()
+    if (response) {
+      message.success(`${'清空了'}`);
+    }
   };
 
   return (
@@ -124,9 +130,12 @@ const NoticeIconView = () => {
       className={styles.action}
       count={unreadMsg.notification}
       onItemClick={(item) => {
-        changeReadState(item.id!);
+        if (item.read != true) {
+          changeReadState(item.id!);
+        }
+        window.location.href=`/#/manage/orders?id=${item.order_id}`
       }}
-      onClear={(title: string, key: string) => clearReadState(title, key)}
+      onClear={() => clearReadState()}
       loading={false}
       clearText="清空"
       viewMoreText="查看更多"

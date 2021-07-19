@@ -4,10 +4,11 @@
 import { request } from 'umi';
 
 /** 此处后端没有提供注释 GET /index.php/api/notices */
-export async function getNotices(options?: { [key: string]: any }) {
+export async function getNotices(params: object, options?: { [key: string]: any }) {
   const response = await request<API.NoticeIconList>('/index.php/api/common/notification/index', {
     method: 'GET',
     ...(options || {}),
+    params: {...params}
   });
   return {data: response.data.items};
 }

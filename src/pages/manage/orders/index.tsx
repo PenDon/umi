@@ -6,7 +6,7 @@ import {
   Timeline,
   Tag, Modal, List,
 } from 'antd';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 // @ts-ignore
 import { FormattedMessage } from 'umi';
 // import { useIntl, FormattedMessage } from 'umi';
@@ -37,10 +37,6 @@ import {
   orders,
   stepList,
 } from '@/services/ant-design-pro/api';
-import {
-  // Link,
-  useParams,
-} from 'react-router-dom';
 import Timestamp from '@/components/Timestamp';
 
 /**
@@ -88,7 +84,6 @@ const handleImport = async (fields: { file: any }) => {
  */
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
-  console.log(fields);
   try {
     await updateOrder({ id: fields.id }, {
       custom_info: fields.custom_info,
@@ -173,7 +168,7 @@ function renderListDescription(item: API.OrderOperation) {
   );
 }
 
-const TableList: React.FC = () => {
+const TableList: React.FC = (props) => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   /** 导入Excel窗口的弹窗 */
@@ -188,15 +183,25 @@ const TableList: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.Order>();
   const [selectedRowsState, setSelectedRows] = useState<API.Order[]>([]);
+  const [id, setId] = useState<string | undefined>(undefined)
+  const [batchId, setBatchId] = useState<string | undefined>(undefined)
+  // @ts-ignore
+  const query = props.location.query
 
   const stepRequest = async () => {
     const response = await stepList();
 
     return response.data;
   };
-
-  // @ts-ignore
-  const { id } = useParams();
+  useEffect(() => {
+    // @ts-ignore
+    const {id, batch_id} = query
+    setId(id)
+    setBatchId(batch_id)
+    if (actionRef.current) {
+      actionRef.current.reload();
+    }
+  }, [query])
 
   /** 国际化配置 */
     // const intl = useIntl();
@@ -434,13 +439,13 @@ const TableList: React.FC = () => {
                 {
                   'value': 1,
                   'label': '是',
-                }
+                },
               ]}
             >
 
             </ProFormSelect>
-          )
-        }
+          );
+        },
       },
       {
         title: '备注',
@@ -517,7 +522,8 @@ const TableList: React.FC = () => {
                   filter) => {
           return orders({
             ...params,
-            batch_id: id,
+            batch_id: batchId ? Number(batchId) : undefined,
+            id: id ? Number(id) : undefined,
           }, { ...sort }, { ...filter });
         }
         }
@@ -656,7 +662,6 @@ const TableList: React.FC = () => {
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
-          console.log(value);
           const success = await handleUpdate(value);
           if (success) {
             handleUpdateModalVisible(false);

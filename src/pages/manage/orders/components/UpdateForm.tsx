@@ -15,7 +15,6 @@ export type UpdateFormProps = {
 
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  console.log(props.values.id)
   return (<ModalForm
       title="修改定制信息"
       width="400px"

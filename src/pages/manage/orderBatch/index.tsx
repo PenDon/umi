@@ -426,7 +426,7 @@ const TableList: React.FC = () => {
       render: (_, record) => {
         return [
           <Button type={'link'}
-          href={`/#/manage/orders/${record.id}`}
+          href={`/#/manage/orders?batch_id=${record.id}`}
                   key={'redirect'}
           >跳转</Button>
         ]
