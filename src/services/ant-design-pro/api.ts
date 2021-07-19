@@ -5,10 +5,11 @@ import { request } from 'umi';
 
 /** 此处后端没有提供注释 GET /index.php/api/notices */
 export async function getNotices(options?: { [key: string]: any }) {
-  return request<API.NoticeIconList>('/index.php/api/notices', {
+  const response = await request<API.NoticeIconList>('/index.php/api/common/notification/index', {
     method: 'GET',
     ...(options || {}),
   });
+  return {data: response.data.items};
 }
 
 //  规则API

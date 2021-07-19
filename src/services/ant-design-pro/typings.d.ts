@@ -2,6 +2,10 @@
 /* eslint-disable */
 
 declare namespace API {
+  type Common = {
+    success: boolean;
+  }
+
   type ErrorItem = {
     field?: string;
     message?: any;
@@ -106,6 +110,8 @@ declare namespace API {
     product_quantity?: number;
     remark?: string;
     paid_at?: number;
+    operations?: OrderOperation[];
+    is_custom_info_modified?: boolean;
     created_at?: number;
     creator?: string;
     updated_at?: number;
@@ -223,9 +229,11 @@ declare namespace API {
   };
 
   type NoticeIconList = {
-    data?: NoticeIconItem[];
+    data?: {
+      items: NoticeIconItem[]
+    };
     /** 列表的内容总数 */
-    total?: number;
+    // total?: number;
     success?: boolean;
   };
 
@@ -270,4 +278,15 @@ declare namespace API {
     id?: number;
     sort: number;
   };
+
+  type OrderOperation = {
+    id?: number;
+    type?: number;
+    order_id?: number;
+    remark?: string;
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  }
 }

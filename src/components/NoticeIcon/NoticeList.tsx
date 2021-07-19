@@ -79,7 +79,7 @@ const NoticeList: React.FC<NoticeIconTabProps> = ({
                 }
                 description={
                   <div>
-                    <div className={styles.description}>{item.description}</div>
+                    <div className={styles.description} style={{whiteSpace: 'pre-line'}} >{item.description}</div>
                     <div className={styles.datetime}>{item.datetime}</div>
                   </div>
                 }

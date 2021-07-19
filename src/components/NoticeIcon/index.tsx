@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Tag, message } from 'antd';
 import { groupBy } from 'lodash';
 import moment from 'moment';
-import { useModel } from 'umi';
+// import { useModel } from 'umi';
 import { getNotices } from '@/services/ant-design-pro/api';
 
 import NoticeIcon from './NoticeIcon';
 import styles from './index.less';
+import React from 'react';
+import { read } from '@/services/ant-design-pro/notification';
 
 export type GlobalHeaderRightProps = {
   fetchingNotices?: boolean;
@@ -71,27 +73,37 @@ const getUnreadData = (noticeData: Record<string, API.NoticeIconItem[]>) => {
 };
 
 const NoticeIconView = () => {
-  const { initialState } = useModel('@@initialState');
-  const { currentUser } = initialState || {};
+  // const { initialState } = useModel('@@initialState');
+  // const { currentUser } = initialState || {};
   const [notices, setNotices] = useState<API.NoticeIconItem[]>([]);
 
   useEffect(() => {
-    getNotices().then(({ data }) => setNotices(data || []));
-  }, []);
-
+    getNotices().then(({ data }) => setNotices(data || []))
+    let intervalId = setInterval(() => {
+      getNotices().then(({ data }) => setNotices(data || []))
+    }, 1000 * 30);
+    return () => {
+      clearInterval(intervalId);
+      // @ts-ignore
+      intervalId = null;
+    }
+  }, [])
   const noticeData = getNoticeData(notices);
   const unreadMsg = getUnreadData(noticeData || {});
+  const changeReadState = async (id: string) => {
+    const { success } = await read({ id: id });
+    if (success) {
+      setNotices(
+        notices.map((item) => {
+          const notice = { ...item };
+          if (notice.id === id) {
+            notice.read = true;
+          }
+          return notice;
+        })
+      );
+    }
 
-  const changeReadState = (id: string) => {
-    setNotices(
-      notices.map((item) => {
-        const notice = { ...item };
-        if (notice.id === id) {
-          notice.read = true;
-        }
-        return notice;
-      }),
-    );
   };
 
   const clearReadState = (title: string, key: string) => {
@@ -110,7 +122,7 @@ const NoticeIconView = () => {
   return (
     <NoticeIcon
       className={styles.action}
-      count={currentUser && currentUser.unreadCount}
+      count={unreadMsg.notification}
       onItemClick={(item) => {
         changeReadState(item.id!);
       }}

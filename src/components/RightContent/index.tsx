@@ -1,11 +1,12 @@
 import { Space } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
+// @ts-ignore
 import { useModel, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
-import NoticeIcon from '@/components/NoticeIcon/NoticeIcon';
+import NoticeIconView from '@/components/NoticeIcon';
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -55,7 +56,7 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span>
-      <NoticeIcon />
+      <NoticeIconView />
       <Avatar />
       <SelectLang className={styles.action} />
     </Space>

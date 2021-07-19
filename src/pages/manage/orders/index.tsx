@@ -4,7 +4,7 @@ import {
   message,
   Drawer,
   Timeline,
-  Tag,
+  Tag, Modal, List,
 } from 'antd';
 import React, { useState, useRef } from 'react';
 // @ts-ignore
@@ -41,6 +41,7 @@ import {
   // Link,
   useParams,
 } from 'react-router-dom';
+import Timestamp from '@/components/Timestamp';
 
 /**
  * 添加节点
@@ -87,9 +88,9 @@ const handleImport = async (fields: { file: any }) => {
  */
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
-  console.log(fields)
+  console.log(fields);
   try {
-    await updateOrder({id: fields.id}, {
+    await updateOrder({ id: fields.id }, {
       custom_info: fields.custom_info,
     });
     hide();
@@ -152,6 +153,26 @@ function renderTimeLine(row: API.Order | undefined) {
   return '-';
 }
 
+function renderListDescription(item: API.OrderOperation) {
+  return (
+    <List.Item>
+      <List.Item.Meta
+        title={<span>{item.type}</span>}
+        description={(
+          <div>
+                        <span>
+                          By {item.creator}
+                        </span>
+            {item.created_at && (
+              <Timestamp timestamp={item.created_at} />)}
+
+          </div>
+        )}
+      />
+    </List.Item>
+  );
+}
+
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -161,6 +182,8 @@ const TableList: React.FC = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
+
+  const [recordVisible, handleRecordVisible] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.Order>();
@@ -187,14 +210,18 @@ const TableList: React.FC = () => {
         width: 140,
         render: (dom, entity) => {
           return (
-            <a
-              onClick={() => {
-                setCurrentRow(entity);
-                setShowDetail(true);
-              }}
-            >
-              {dom}
-            </a>
+            <div>
+              <a
+                onClick={() => {
+                  setCurrentRow(entity);
+                  setShowDetail(true);
+                }}
+              >
+                {dom}
+              </a>
+              {entity.is_custom_info_modified &&
+              <Tag color={'red'}>定制信息已修改！</Tag>}
+            </div>
           );
         },
       },
@@ -281,12 +308,12 @@ const TableList: React.FC = () => {
       },
       {
         title: '当前步骤',
-        dataIndex: ['batch', 'step' , 'name'],
+        dataIndex: ['batch', 'step', 'name'],
         renderText: (text: any, record) => {
           if (!text) {
             return <Tag color={'yellow'}>没有安排</Tag>;
           }
-          const batch = record.batch
+          const batch = record.batch;
           if (batch) {
             if (batch.status === 2) {
               return <Tag color="green">已完成{text}</Tag>;
@@ -297,7 +324,8 @@ const TableList: React.FC = () => {
             }
 
             if (batch.status === 0) {
-              return <Tag color="red">正在{text}</Tag>;;
+              return <Tag color="red">正在{text}</Tag>;
+              ;
             }
           }
           return '无';
@@ -364,11 +392,63 @@ const TableList: React.FC = () => {
         hideInTable: true,
       },
       {
+        title: '操作记录',
+        dataIndex: 'operations',
+        search: false,
+        width: 150,
+        hideInDescriptions: true,
+        // hideInTable: true,
+        renderText: (operations: API.OrderOperation[], order) => {
+          if (!operations || !operations.length) {
+            return '无';
+          } else {
+            return (
+
+              <Button key={'view-more'}
+                      type={'primary'}
+                      onClick={() => {
+                        handleRecordVisible(true);
+                        setCurrentRow(order);
+                      }}
+              >
+                查看
+              </Button>
+            );
+          }
+        },
+      },
+      {
+        title: '修改定制信息',
+        hideInForm: true,
+        hideInDescriptions: true,
+        hideInTable: true,
+        renderFormItem: () => {
+          return (
+            <ProFormSelect
+              name={'has_custom_info_modified'}
+              options={[
+                {
+                  'value': 0,
+                  'label': '否',
+                },
+                {
+                  'value': 1,
+                  'label': '是',
+                }
+              ]}
+            >
+
+            </ProFormSelect>
+          )
+        }
+      },
+      {
         title: '备注',
         dataIndex: 'remark',
         search: false,
         // hideInTable: true,
       },
+
 
       {
         title: '操作',
@@ -382,9 +462,9 @@ const TableList: React.FC = () => {
                       handleUpdateModalVisible(true);
                       setCurrentRow(record);
                     }}
-            >编辑</Button>
-          ]
-        }
+            >编辑</Button>,
+          ];
+        },
       },
       // {
       //   title: '附加图片',
@@ -477,6 +557,23 @@ const TableList: React.FC = () => {
           {/* </Button> */}
         </FooterToolbar>
       )}
+      <Modal
+        footer={null}
+        visible={recordVisible}
+        onCancel={() => {
+          setCurrentRow(undefined);
+          handleRecordVisible(false);
+        }}
+      >
+        <List
+          dataSource={currentRow?.operations}
+          renderItem={(item: API.OrderOperation) => {
+            return renderListDescription(item);
+          }}
+          rowKey={'id'}
+        />
+
+      </Modal>
       <ModalForm
         title="导入Excel"
         width="400px"
@@ -559,7 +656,7 @@ const TableList: React.FC = () => {
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
-          console.log(value)
+          console.log(value);
           const success = await handleUpdate(value);
           if (success) {
             handleUpdateModalVisible(false);

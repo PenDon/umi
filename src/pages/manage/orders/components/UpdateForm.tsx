@@ -17,7 +17,7 @@ export type UpdateFormProps = {
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   console.log(props.values.id)
   return (<ModalForm
-      title="导入Excel"
+      title="修改定制信息"
       width="400px"
       visible={props.updateModalVisible}
       onFinish={props.onSubmit}

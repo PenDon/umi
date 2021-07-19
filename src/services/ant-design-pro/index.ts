@@ -5,8 +5,10 @@
 import * as api from './api';
 // import * as login from './login';
 import * as process from './process';
+import * as notification from './notification';
 export default {
   api,
   // login,
   process,
+  notification,
 };
