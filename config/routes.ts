@@ -98,15 +98,15 @@
     ],
   },
   {
-    name: 'toDoList',
-    icon: 'user',
-    path: '/toDoList',
+    name: 'after-sale',
+    icon: 'exception',
+    path: '/after-sale',
     routes: [
       {
-        name: 'orders',
+        name: 'reissue-orders',
         // icon: 'user',
-        path: '/toDoList/orders',
-        component: './toDoList/orders',
+        path: '/after-sale/reissue-orders',
+        component: './after-sale/reissue-orders',
       },
     ],
   },

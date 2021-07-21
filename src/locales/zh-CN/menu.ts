@@ -29,6 +29,8 @@ export default {
   'menu.list': '列表页',
   'menu.manage': '基础管理页',
   'menu.toDoList': '待办事项',
+  'menu.after-sale': '售后问题',
+  'menu.after-sale.reissue-orders': '补发订单管理',
   'menu.toDoList.orders': '订单',
   'menu.toDoList.orderBatch': '订单批次',
   'menu.list.table-list': '查询表格',

@@ -10,7 +10,7 @@ export async function getNotices(params: object, options?: { [key: string]: any 
     ...(options || {}),
     params: {...params}
   });
-  return {data: response.data.items};
+  return {data: response.data?.items};
 }
 
 //  规则API
@@ -149,43 +149,43 @@ export async function removeMember(params?: { ids: string }) {
   });
 }
 
-// //  补发订单API
-// /** 获取补发订单列表 GET /index.php/api/reissue/default/index */
-// export async function reissueOrders(
-//   params: {
-//     // query
-//     /** 当前的页码 */
-//     current?: number;
-//     /** 页面的容量 */
-//     pageSize?: number;
-//   },
-//   sorter: {
-//     type?: string,
-//     created_at?: string,
-//   },
-//   options?: { [key: string]: any },
-// ) {
-//   // 前端排序字段处理
-//   let sortObj = {};
-//   if (sorter) {
-//     for (let key in sorter) {
-//       sortObj['sort'] = sorter[key] == 'ascend' ? key : '-' + key;
-//       break;
-//     }
-//   }
-//   const response = await request<API.ReissueOrderList>('/index.php/api/reissue/default/index', {
-//     method: 'GET',
-//     params: {
-//       ...params, ...sortObj,
-//     },
-//     ...(options || {}),
-//   });
-//   return {
-//     data: response?.data?.items,
-//     success: response.success,
-//     total: response.data?._meta.totalCount,
-//   };
-// }
+//  补发订单API
+/** 获取补发订单列表 GET /index.php/api/reissue/default/index */
+export async function reissueOrders(
+  params: {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  sorter: {
+    type?: string,
+    created_at?: string,
+  },
+  options?: { [key: string]: any },
+) {
+  // 前端排序字段处理
+  let sortObj = {};
+  if (sorter) {
+    for (let key in sorter) {
+      sortObj['sort'] = sorter[key] == 'ascend' ? key : '-' + key;
+      break;
+    }
+  }
+  const response = await request<API.ReissueOrderList>('/index.php/api/reissue/default/index', {
+    method: 'GET',
+    params: {
+      ...params, ...sortObj,
+    },
+    ...(options || {}),
+  });
+  return {
+    data: response?.data?.items,
+    success: response.success,
+    total: response.data?._meta.totalCount,
+  };
+}
 
 /** 修改补发订单 POST /index.php/api/member/update */
 export async function updateReissueOrder(options?: { [key: string]: any }) {

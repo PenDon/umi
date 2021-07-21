@@ -86,7 +86,10 @@ declare namespace API {
   type ReissueOrderItem = {
     id?: number;
     order?: Order;
+    order_number?: string;
     type?: number;
+    type_formatted?: string;
+    has_order?: number;
     image?: string;
     remark?: string;
     created_at?: number;
