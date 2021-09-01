@@ -125,18 +125,22 @@ export async function members(
 
 // @todo 修改为传递数据data
 /** 修改用户 PUT /index.php/api/member/update */
-export async function updateMember(options?: { [key: string]: any }) {
+export async function updateMember(options?: { [key: string]: any }, params?: object, data?: object) {
   return request<API.MemberListItem>('/index.php/api/member/update', {
     method: 'PUT',
     ...(options || {}),
+    params: params,
+    data: data
   });
 }
 
-/** 新建用户 POST /index.php/api/member/create */
-export async function addMember(options?: { [key: string]: any }) {
-  return request<API.MemberListItem>('/index.php/api/member/create', {
+// @ts-ignore
+/** 新建用户 POST /index.php/api/passport/register */
+export async function addMember({ options, data }: { options?: { [p: string]: any }, data: any }) {
+  return request<API.MemberListItem>('/index.php/api/passport/register', {
     method: 'POST',
     ...(options || {}),
+    data: data
   });
 }
 
@@ -211,6 +215,14 @@ export async function removeReissueOrder(params: { ids: string }) {
   });
 }
 
+/** 补发订单导出 GET /index.php/api/reissue/default/to-excel */
+export async function reissueOrderToExcel(params: { ids: string }) {
+  return request<Record<string, any>>('/index.php/api/reissue/default/to-excel', {
+    method: 'GET',
+    params: { ...params },
+  });
+}
+
 // 订单API
 /** 获取订单列表 GET /index.php/api/erp/order/index */
 export async function orders(
@@ -250,6 +262,11 @@ export async function orders(
 /** 步骤列表 GET /index.php/api/member/update */
 export async function stepList() {
   return request<any>('/index.php/api/erp/order/step-list');
+}
+
+/** 部门列表 GET /index.php/api/erp/process/list-department */
+export async function departmentList() {
+  return request<any>('/index.php/api/erp/process/list-department');
 }
 
 /** 修改订单 POST /index.php/api/member/update */
@@ -353,19 +370,93 @@ export async function batchFurtherStep(params?: object) {
     data: { ...params },
   });
 }
-
-/** 员工提交任务接口 POST /index.php/api/erp/order-batch/pick-up */
-export async function batchPickUp(params: { ids: string }) {
+/** 员工领取任务接口 POST /index.php/api/erp/order-batch/pick-up */
+export async function batchPickUp(params: { ids: string}) {
   return request<Record<string, any>>('/index.php/api/erp/order-batch/pick-up', {
-    method: 'GET',
+    method: 'POST',
     params: { ...params },
   });
 }
+
+/** 员工提交任务接口 POST /index.php/api/erp/order-batch/submit */
+export async function batchSubmit(params: { ids: string, save_path?: string }) {
+  return request<Record<string, any>>('/index.php/api/erp/order-batch/submit', {
+    method: 'POST',
+    params: { ...params },
+  });
+}
+
 
 /** 审核接口 POST /index.php/api/erp/order-batch/pick-up */
 export async function batchCheck(params: { ids: string }) {
   return request<Record<string, any>>('/index.php/api/erp/order-batch/check', {
-    method: 'GET',
+    method: 'POST',
     params: { ...params },
   });
 }
+
+//  部门CRUD API
+/** 获取补发订单列表 GET /index.php/api/erp/department/index */
+export async function departments(
+  params: {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  sorter: {
+    type?: string,
+    created_at?: string,
+  },
+  options?: { [key: string]: any },
+) {
+  // 前端排序字段处理
+  let sortObj = {};
+  if (sorter) {
+    for (let key in sorter) {
+      sortObj['sort'] = sorter[key] == 'ascend' ? key : '-' + key;
+      break;
+    }
+  }
+  const response = await request<API.DepartmentList>('/index.php/api/erp/department/index', {
+    method: 'GET',
+    params: {
+      ...params, ...sortObj,
+      parent_id: 1,
+    },
+    ...(options || {}),
+  });
+  return {
+    data: response?.data?.items,
+    success: response.success,
+    total: response.data?._meta.totalCount,
+  };
+}
+
+/** 修改部门 POST /index.php/api/erp/department/update */
+export async function updateDepartment(options?: { [key: string]: any }, params?: object, data?: object) {
+  return request<API.Department>('/index.php/api/erp/department/update', {
+    method: 'POST',
+    ...(options || {}),
+    params: {...params},
+    data: {...data},
+  });
+}
+
+/** 新建补发订单 POST /index.php/api/member/create */
+export async function addDepartment(params?: object) {
+  return request<API.Department>('/index.php/api/erp/department/create', {
+    method: 'POST',
+    data: { ...params },
+  });
+}
+
+/** 删除补发订单 POST /index.php/api/reissue/default/delete */
+export async function removeDepartment(params: { ids: string }) {
+  return request<Record<string, any>>('/index.php/api/erp/department/delete', {
+    method: 'POST',
+    params: { ...params },
+  });
+}
+

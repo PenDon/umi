@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
 import { stringify } from 'querystring';
@@ -84,12 +84,12 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
           个人中心
         </Menu.Item>
       )}
-      {menu && (
-        <Menu.Item key="settings">
-          <SettingOutlined />
-          个人设置
-        </Menu.Item>
-      )}
+      {/*{menu && (*/}
+      {/*  <Menu.Item key="settings">*/}
+      {/*    <SettingOutlined />*/}
+      {/*    个人设置*/}
+      {/*  </Menu.Item>*/}
+      {/*)}*/}
       {menu && <Menu.Divider />}
 
       <Menu.Item key="logout">

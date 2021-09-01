@@ -32,6 +32,7 @@ declare namespace API {
   type PageParams = {
     current?: number;
     pageSize?: number;
+    pick_up_member_id?: string | null;
   };
 
   type Links = {
@@ -55,6 +56,7 @@ declare namespace API {
 
   type MemberListItem = {
     id?: number;
+    category_id?: number;
     login_count?: number;
     type?: number;
     type_formatted?: string;
@@ -63,6 +65,7 @@ declare namespace API {
     created_at?: number;
     creator?: number;
     mobile_phone?: string;
+    remark?: string;
   };
 
   type MemberList = {
@@ -124,7 +127,9 @@ declare namespace API {
   type OrderBatch = {
     id?: number;
     name?: string;
+    save_path?: string;
     process?: string;
+    process_id?: number;
     quantity?: number;
     stepDetails: StepDetail[];
     status?: number;
@@ -281,6 +286,7 @@ declare namespace API {
     name?: string;
     id?: number;
     sort: number;
+    category_id?: number;
   };
 
   type OrderOperation = {
@@ -293,4 +299,24 @@ declare namespace API {
     updated_at?: number;
     updater?: string;
   }
+
+  // department
+  type DepartmentList = {
+    success: boolean;
+    data?: {
+      items: Department[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type Department = {
+    id?: number;
+    name?: string;
+    description?: string;
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  };
 }

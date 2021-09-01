@@ -1,29 +1,35 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Drawer, Timeline } from 'antd';
+import {
+  Button,
+  message,
+  Drawer,
+} from 'antd';
 import React, { useState, useRef } from 'react';
-// import { useIntl, FormattedMessage } from 'umi';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+// @ts-ignore
+import { FormattedMessage } from 'umi';
+import {
+  PageContainer,
+  FooterToolbar,
+} from '@ant-design/pro-layout';
+import type {
+  ProColumns,
+  ActionType,
+} from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import {
   ModalForm,
   ProFormText,
-  ProFormList,
-  ProFormGroup,
-  ProFormSelect,
+  ProFormTextArea,
 } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
+import UpdateForm from './components/UpdateForm';
 import {
-  addProcess,
-  updateProcess,
-  removeProcess,
-  processes,
-} from '@/services/ant-design-pro/processes';
-import UpdateForm from '@/pages/manage/process/components/UpdateForm';
-import {
-  departmentList,
+  addDepartment,
+  updateDepartment,
+  removeDepartment,
+  departments,
 } from '@/services/ant-design-pro/api';
 
 /**
@@ -31,10 +37,11 @@ import {
  *
  * @param fields
  */
-const handleAdd = async (fields: API.Process) => {
+const handleAdd = async (fields: API.Department) => {
+  console.log(fields)
   const hide = message.loading('正在添加');
   try {
-    await addProcess({ ...fields });
+    await addDepartment({ ...fields, parent_id: 1 });
     hide();
     message.success('添加成功');
     return true;
@@ -51,23 +58,19 @@ const handleAdd = async (fields: API.Process) => {
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
+  const hide = message.loading('正在修改');
   try {
-    await updateProcess(
-      { id: fields.id },
-      {
-        name: fields.name,
-        remark: fields.remark,
-        steps: fields.steps,
-      },
-    );
+    await updateDepartment({}, { id: fields.id }, {
+      name: fields.name,
+      description: fields.description,
+    });
     hide();
 
-    message.success('配置成功');
+    message.success('修改成功');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('修改失败请重试！');
     return false;
   }
 };
@@ -77,11 +80,11 @@ const handleUpdate = async (fields: FormValueType) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.Process[]) => {
+const handleRemove = async (selectedRows: API.Department[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeProcess({
+    await removeDepartment({
       ids: selectedRows.map((row) => row.id).join(','),
     });
     hide();
@@ -94,17 +97,6 @@ const handleRemove = async (selectedRows: API.Process[]) => {
   }
 };
 
-const departmentRequest = async () => {
-  const response = await departmentList();
-  let d = [];
-  for (const item in response.data) {
-    d.push({"label": response.data[item], "value": item})
-  }
-
-  // return response.data;
-  return d;
-};
-
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -114,48 +106,26 @@ const TableList: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.Process>();
-  const [selectedRowsState, setSelectedRows] = useState<API.Process[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.Department>();
+  const [selectedRowsState, setSelectedRows] = useState<API.Department[]>([]);
+  let len = 0;
 
-  /** 国际化配置 */
-  // const intl = useIntl();
-
-
-  const columns: ProColumns<API.Process>[] = [
+  const columns: ProColumns<API.Department>[] = [
     {
-      title: '名称',
+      title: '部门名称',
       dataIndex: 'name',
       render: (dom, entity) => {
         return (
           <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
+            // onClick={() => {
+            //   setCurrentRow(entity);
+            //   setShowDetail(true);
+            // }}
           >
             {dom}
           </a>
         );
       },
-    },
-    {
-      title: '流程步骤',
-      dataIndex: 'steps',
-      search: false,
-      renderText: (steps: API.Step[]) => {
-        return (
-          <Timeline mode="left">
-            {steps.map((step: API.Step) => {
-              return <Timeline.Item key={step.id}>{step.name}</Timeline.Item>;
-            })}
-          </Timeline>
-        );
-      },
-    },
-    {
-      title: '创建人',
-      dataIndex: 'creator',
-      search: false,
     },
     {
       title: '创建日期',
@@ -170,9 +140,8 @@ const TableList: React.FC = () => {
 
     {
       title: '备注',
-      dataIndex: 'remark',
+      dataIndex: 'description',
       search: false,
-      hideInTable: true,
     },
     {
       title: '操作',
@@ -197,14 +166,13 @@ const TableList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.Process, API.PageParams>
-        headerTitle="订单列表"
+      <ProTable<API.Department, API.PageParams>
+        headerTitle="部门列表"
         actionRef={actionRef}
         rowKey="id"
         search={{
           labelWidth: 120,
         }}
-        pagination={{ defaultPageSize: 10 }}
         toolBarRender={() => [
           <Button
             type="primary"
@@ -213,23 +181,30 @@ const TableList: React.FC = () => {
               handleModalVisible(true);
             }}
           >
-            <PlusOutlined />
-            新建
+            <PlusOutlined /> 新建
           </Button>,
         ]}
-        request={processes}
+        request={departments}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
             setSelectedRows(selectedRows);
           },
         }}
+        onLoad={(dataSource) => {
+          len = dataSource.length
+        }}
       />
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
             <div>
-              已选择 <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a> 项 &nbsp;&nbsp;
+              <FormattedMessage id="pages.searchTable.chosen"
+                                defaultMessage="已选择" />{' '}
+              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
+              <FormattedMessage id="pages.searchTable.item"
+                                defaultMessage="项" />
+              &nbsp;&nbsp;
             </div>
           }
         >
@@ -240,21 +215,18 @@ const TableList: React.FC = () => {
               actionRef.current?.reloadAndRest?.();
             }}
           >
-            批量删除
+            <FormattedMessage id="pages.searchTable.batchDeletion"
+                              defaultMessage="批量删除" />
           </Button>
-          {/* <Button type="primary"> */}
-          {/*  <FormattedMessage id="pages.searchTable.batchApproval" */}
-          {/*                    defaultMessage="批量审批" /> */}
-          {/* </Button> */}
         </FooterToolbar>
       )}
       <ModalForm
-        title="新建流程"
-        width="640px"
+        title="新建部门"
+        width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.Process);
+          const success = await handleAdd(Object.assign(value, {ordering: len}) as API.Department);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {
@@ -267,31 +239,16 @@ const TableList: React.FC = () => {
           rules={[
             {
               required: true,
-              message: '必填项',
+              message: '名称必填!',
             },
           ]}
-          label="流程名称"
           width="md"
           name="name"
+          label="部门名称"
         />
-        <ProFormList name="steps" label="步骤">
-          <ProFormGroup>
-            <ProFormText
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-              name="name"
-              label="步骤名称"
-            />
-            <ProFormSelect name="category_id"
-                           label="所属部门"
-                           request={departmentRequest} />
-          </ProFormGroup>
-        </ProFormList>
-
-        <ProFormText label="备注" width="md" name="remark" />
+        <ProFormTextArea width="md"
+                         name="description"
+                         label="备注" />
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
@@ -321,17 +278,17 @@ const TableList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.id && (
-          <ProDescriptions<API.Process>
+        {currentRow?.name && (
+          <ProDescriptions<API.RuleListItem>
             column={2}
             title={currentRow?.name}
             request={async () => ({
               data: currentRow || {},
             })}
             params={{
-              id: currentRow?.id,
+              id: currentRow?.name,
             }}
-            columns={columns as ProDescriptionsItemProps<API.Process>[]}
+            columns={columns as ProDescriptionsItemProps<API.Department>[]}
           />
         )}
       </Drawer>

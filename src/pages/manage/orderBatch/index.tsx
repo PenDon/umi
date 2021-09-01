@@ -1,11 +1,26 @@
 // import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Drawer, Timeline, Tag } from 'antd';
+import {
+  Button,
+  message,
+  Drawer,
+  Timeline,
+  Tag,
+} from 'antd';
 import React, { useState, useRef } from 'react';
 // import { history } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import type {
+  ProColumns,
+  ActionType,
+} from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormSelect, ProFormUploadButton } from '@ant-design/pro-form';
+import {
+  ModalForm,
+  ProFormText,
+  ProFormSelect,
+  ProFormUploadButton,
+  ProFormDatePicker,
+} from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
@@ -18,11 +33,13 @@ import {
   updateOrderBatch,
   removeOrderBatch,
   batchFurtherStep,
-  batchPickUp,
+  batchSubmit,
   batchCheck,
-  members,
+  stepList,
 } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
+import { processes } from '@/services/ant-design-pro/processes';
+
 const { Operation } = StatisticCard;
 
 /**
@@ -45,29 +62,12 @@ const handleAdd = async (fields: API.OrderBatch) => {
 };
 
 /**
- * 员工列表
- *
- */
-const memberList = async () => {
-  try {
-    const response = await members({}, {});
-    if (response.data) {
-      return response.data.map((value: API.MemberListItem) => {
-        return { label: `${value.username}-${value.type_formatted}`, value: value.id };
-      });
-    }
-    return [] ;
-  } catch (error) {
-    return [];
-  }
-};
-
-/**
  * 导入Excel
  *
  * @param fields
  */
 const handleImport = async (fields: { file: any }) => {
+  console.log(fields)
   const hide = message.loading('正在上传');
   try {
     await importExcel({ ...fields });
@@ -131,13 +131,15 @@ const handleRemove = async (selectedRows: API.OrderBatch[]) => {
  * 批量提交
  *
  * @param selectedRows
+ * @param data
  */
-const handlePickUp = async (selectedRows: API.OrderBatch[]) => {
+const handleSubmit = async (selectedRows: API.OrderBatch[], data?: { save_path: any }) => {
   const hide = message.loading('正在处理');
   if (!selectedRows) return true;
   try {
-    await batchPickUp({
+    await batchSubmit({
       ids: selectedRows.map((row) => row.id).join(','),
+      save_path: data?.save_path,
     });
     hide();
     message.success('成功，即将刷新');
@@ -179,17 +181,28 @@ function renderTimeLine(row: API.OrderBatch | undefined) {
       <Timeline mode="left">
         {details.map((detail: any) => {
           let name = '';
-          if (detail.type == 0) {
-            name = '安排';
-          } else {
-            name = detail.type == 1 ? '提交' : '完成';
+          switch(parseInt(detail.type)) {
+            case 0:
+              name = '安排';
+              break;
+            case 1:
+              name = '接取';
+              break;
+            case 2:
+              name = '提交';
+              break;
+            case 3:
+              name = '完成';
+              break;
+            default:
+
           }
           return (
-            <Timeline.Item key={detail.id} label={detail.created_at}>
+            <Timeline.Item key={detail.id}
+                           label={detail.created_at}>
               {name}
-              {detail.name} By <Tag color={'blue'} key={'username'}>{detail.username}</Tag> To {
-                detail.type == 0 && (<Tag color={'blue'} key={'arranged'}>{row.arranged}</Tag>)
-            }
+              {detail.name}任务 By <Tag color={'blue'}
+                                    key={'username'}>{detail.username}</Tag>
             </Timeline.Item>
           );
         })}
@@ -200,10 +213,10 @@ function renderTimeLine(row: API.OrderBatch | undefined) {
 }
 
 function renderOrdersQuantity(data: readonly API.OrderBatch[]) {
-  let sum = 0
+  let sum = 0;
   for (const d of data) {
     if (d.quantity) {
-      sum += d.quantity
+      sum += d.quantity;
     }
   }
   return (
@@ -218,21 +231,21 @@ function renderOrdersQuantity(data: readonly API.OrderBatch[]) {
       <StatisticCard
         statistic={{
           title: '散单',
-          value: 234,
+          value: "xxx",
         }}
       />
       <Operation>+</Operation>
       <StatisticCard
         statistic={{
           title: 'XXX单',
-          value: 112,
+          value: "xxx",
         }}
       />
       <Operation>+</Operation>
       <StatisticCard
         statistic={{
           title: 'YYY单',
-          value: 255,
+          value: "xxx",
         }}
       />
     </StatisticCard.Group>
@@ -242,15 +255,13 @@ function renderOrdersQuantity(data: readonly API.OrderBatch[]) {
 /**
  * 批量安排下一步
  * @param selectedRows
- * @param fields
  */
-const handleFurtherStep = async (selectedRows: API.OrderBatch[], fields: any) => {
+const handleFurtherStep = async (selectedRows: API.OrderBatch[]) => {
   const hide = message.loading('正在批量操作');
   if (!selectedRows) return true;
   try {
     await batchFurtherStep({
-      ids: selectedRows.map((row) => row.id).join(','),
-      ...fields,
+      ids: selectedRows.map((row) => row.id).join(',')
     });
     hide();
     message.success('操作成功，即将刷新');
@@ -262,14 +273,39 @@ const handleFurtherStep = async (selectedRows: API.OrderBatch[], fields: any) =>
   }
 };
 
+const stepRequest = async () => {
+  const response = await stepList();
+
+  return response.data;
+};
+
+const processRequest = async () => {
+  const response = await processes({}, {}, {});
+  let a = [{}]
+  if (response.data)
+    a = response.data.map((item: API.Process) => {
+     return {label: item.name, value: item.id}
+   })
+
+
+  return a;
+};
+
 const TableList: React.FC = () => {
+
+  /** processList */
+  const [processList, setProcessList] = useState<object[]>([]);
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   /** 导入Excel窗口的弹窗 */
   const [createExcelModalVisible, handleExcelModalVisible] = useState<boolean>(false);
 
   /** 安排下一步窗口的弹窗 */
-  const [createFurtherStepModalVisible, handleFurtherStepModalVisible] = useState<boolean>(false);
+  // const [createFurtherStepModalVisible, handleFurtherStepModalVisible] = useState<boolean>(false);
+
+  /** 提交任务窗口的弹窗 */
+  const [createTaskDoneModalVisible, handleTaskDoneModalVisible] = useState<boolean>(false);
+
 
   /** 分布更新窗口的弹窗 */
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
@@ -284,227 +320,176 @@ const TableList: React.FC = () => {
   // @ts-ignore
   // @ts-ignore
   /** 国际化配置 */
-  // const intl = useIntl();
 
   const columns: ProColumns<API.OrderBatch>[] = [
-    {
-      title: '序号',
-      dataIndex: 'id',
-      sorter: true,
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
+      {
+        title: '序号',
+        dataIndex: 'id',
+        sorter: true,
+        render: (dom, entity) => {
+          return (
+            <a
+              onClick={() => {
+                setCurrentRow(entity);
+                setShowDetail(true);
+              }}
+            >
+              {dom}
+            </a>
+          );
+        },
+        search: false,
       },
-    },
-    {
-      title: '名称',
-      dataIndex: 'name',
-      sorter: true,
-    },
-    {
-      title: '单量',
-      dataIndex: 'quantity',
-      sorter: true,
-    },
-    {
-      title: '处理流程',
-      dataIndex: 'process',
-    },
-    {
-      title: '步骤',
-      dataIndex: ['step', 'name'],
-      search: false,
-      renderText: (text: any, record) => {
-        if (!text) {
-          return <Tag color={'yellow'}>没有安排</Tag>;
-        }
-        // eslint-disable-next-line no-restricted-syntax
-        const status = record.status;
-
-        if (status !== undefined) {
-
-          if (status == 2) {
-            return <Tag color="green">已完成{text}</Tag>; //  审核通过  => 完成
+      {
+        title: '名称',
+        dataIndex: 'name',
+        sorter: true,
+      },
+      {
+        title: '存图路径',
+        dataIndex: 'save_path',
+        search: false,
+      },
+      {
+        title: '单量',
+        dataIndex: 'quantity',
+        sorter: true,
+        search: false,
+      },
+      {
+        title: '处理流程',
+        dataIndex: 'process_id',
+        valueType: 'select',
+        request : async () => {
+          if (!processList.length) {
+            const d = await processRequest();
+            setProcessList(d);
+            return d;
+          } else {
+            return processList;
           }
 
-          if (status == 1) {
-            return <Tag color="blue">审核{text}中</Tag>;
+        },
+      },
+      {
+        title: '进度',
+        dataIndex: ['step', 'name'],
+        renderText: (text: any, record) => {
+          if (!text) {
+            return <Tag color={'yellow'}>没有安排</Tag>;
+          }
+          // eslint-disable-next-line no-restricted-syntax
+          const status = record.status;
+
+          if (status !== undefined) {
+
+            if (status == 3) {
+              return <Tag color="green">已完成{text}</Tag>; //  审核通过
+                                                         //  =>
+                                                         // 完成
+            }
+
+            if (status == 2) {
+              return <Tag color="blue">审核{text}中</Tag>;
+            }
+
+            if (status == 1) {
+              return <Tag color="cyan">{text}任务已接取</Tag>; // 任务已被接取
+            }
+
+            if (status == 0) {
+              return <Tag color="red">{text}任务待接取</Tag>; //  安排了人
+                                                      // =>
+                                                      // 正在
+            }
           }
 
-          if (status == 0) {
-            return <Tag color="red">正在{text}</Tag>; //  安排了人 => 正在
-          }
-        }
-
-        return '无';
+          return '无';
+        },
+        renderFormItem: () => {
+          return (
+            <div>
+              <ProFormSelect name="step_id"
+                             params={{}}
+                             request={stepRequest} />
+              <ProFormSelect name="status"
+                             options={[
+                               {
+                                 value: 0,
+                                 label: '待接取',
+                               },
+                               {
+                                 value: 1,
+                                 label: '已接取',
+                               },
+                               {
+                                 value: 2,
+                                 label: '审核中',
+                               },
+                               {
+                                 value: 3,
+                                 label: '完成',
+                               },
+                             ]}
+              />
+            </div>
+          );
+        },
       },
-    },
 
-    // {
-    //   title: '是否打面单',
-    //   dataIndex: ['order', 'has_face_sheet'],
-    //   valueEnum: {
-    //     '': {
-    //       text: '全部',
-    //     },
-    //     0: {
-    //       text: '否',
-    //     },
-    //     1: {
-    //       text: '是',
-    //     },
-    //   },
-    //
-    // },
-
-    // {
-    //   title: '补发性质',
-    //   dataIndex: 'type',
-    //   valueEnum: {
-    //     '': {
-    //       text: '全部',
-    //     },
-    //     0: {
-    //       text: '补发性质一',
-    //     },
-    //     1: {
-    //       text: '补发性质二',
-    //     },
-    //     2: {
-    //       text: '补发性质三',
-    //     },
-    //     3: {
-    //       text: '补发性质四',
-    //     },
-    //
-    //   },
-    // },
-    {
-      title: '创建人',
-      dataIndex: 'creator',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: '创建日期',
-      dataIndex: 'created_at',
-      sorter: true,
-      renderText: (text: number) => {
-        return text * 1000;
+      {
+        title: '创建人',
+        dataIndex: 'creator',
+        search: false,
+        hideInTable: true,
       },
-      valueType: 'dateTime',
-      search: false,
-      hideInTable: true,
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      search: false,
-      hideInTable: true,
-    },
-    // {
-    //   title: '附加图片',
-    //   dataIndex: 'image',
-    //   search: false,
-    //   renderText: (text) => {
-    //     return (<img src={text}
-    //                  width={50} />);
-    //   },
-    // },
-    {
-      title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => {
-        return [
-          <Button type={'link'}
-          href={`/#/manage/orders?batch_id=${record.id}`}
-                  key={'redirect'}
-          >跳转</Button>
-        ]
-      }
-    }
-    //     // stepDetails[len - 1]: 最新的一条步骤记录
-    //
-    //     // 下一步按钮是否可点击: 没有安排 或者 最新记录是已完成状态
-    //     let furtherStepDisabled = true;
-    //     const len = record.stepDetails.length;
-    //     if (
-    //       record.stepDetails &&
-    //       (len === 0 || record.stepDetails[len - 1].type === 2)
-    //     ) {
-    //       furtherStepDisabled = false;
-    //     }
-    //
-    //     // // 接取任务按钮是否可点击： 最新记录是待接取任务状态
-    //     // let pickUpDisabled = true;
-    //     // if (len !== 0 && record.stepDetails[len -
-    //     // 1].type === 0) { pickUpDisabled = false; }  //
-    //     // 提交任务按钮是否可点击： 最新记录是已接取任务状态 let submitDisabled =
-    //     // true; if (len !== 0 && record.stepDetails[len
-    //     // - 1].type === 1) { submitDisabled = false; }
-    //
-    //     return [
-    //       <Button
-    //         disabled={furtherStepDisabled}
-    //         key="furtherStep"
-    //         type="primary"
-    //         onClick={handleFurtherStepClick}
-    //       >
-    //         安排下一步
-    //       </Button>,
-    //       // <Button
-    //       //   disabled={pickUpDisabled}
-    //       //   key="pickUp"
-    //       //   type="primary"
-    //       //   onClick={handleFurtherStepClick}
-    //       // >
-    //       //   接取任务
-    //       // </Button>,
-    //       // <Button
-    //       //   disabled={submitDisabled}
-    //       //   key="submit"
-    //       //   type="primary"
-    //       //   onClick={handleFurtherStepClick}
-    //       // >
-    //       //   提交任务
-    //       // </Button>,
-    //     ];
-    //
-    //     // [
-    //     // <button disabled={true}
-    //     //
-    //     //         key="config"
-    //     //         onClick={() => {
-    //     //           handleUpdateModalVisible(true);
-    //     //           setCurrentRow(record);
-    //     //         }}
-    //     // >
-    //     //   安排下一步进行的时间
-    //     //
-    //     // </button>,
-    //     //
-    //     // ],
-    //   },
-    // },
-  ];
+      {
+        title: '创建日期',
+        dataIndex: 'created_at',
+        sorter: true,
+        renderText: (text: number) => {
+          return text * 1000;
+        },
+        valueType: 'dateTime',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        search: false,
+        hideInTable: true,
+      },
+      {
+        title: '操作',
+        dataIndex: 'option',
+        valueType: 'option',
+        render: (_, record) => {
+          return [
+            <Button type={'link'}
+                    href={`/#/manage/orders?batch_id=${record.id}`}
+                    key={'redirect'}
+            >跳转至订单详情</Button>,
+            <Button type={'link'}
+                    key={'update'}
+                    onClick={() => {
+                      handleUpdateModalVisible(true);
+                      setCurrentRow(record);
+                    }}
+            >编辑</Button>,
+          ];
 
-  // @ts-ignore
-  // @ts-ignore
-  // @ts-ignore
+        },
+      },
+    ];
   return (
     <PageContainer>
       <ProTable<API.OrderBatch, API.PageParams>
         headerTitle="订单列表"
-        footer={(data) => {return renderOrdersQuantity(data)}}
+        scroll={{y: 500}}
+        footer={(data) => {
+          return renderOrdersQuantity(data);
+        }}
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -514,18 +499,16 @@ const TableList: React.FC = () => {
         toolBarRender={
           (action, rows) => {
             if (rows.selectedRows && rows.selectedRows.length !== 0) {
-              // @ts-ignore
-              // eslint-disable-next-line eqeqeq
-              const furtherStepVisible = localStorage.getItem('user_type') == '1' ? '' : 'none';
-              const checkVisible = localStorage.getItem('user_type') == '1' ? '' : 'none';
-              // const pickUpVisible = localStorage.getItem('user_type') == '1' ? '' : 'none'
               return [
                 <div>
                   <span style={{ marginRight: 10 }}>批量操作：</span>
                   <Button
                     // @ts-ignore
                     type="danger"
-                    style={{ marginRight: 5, display: 'none' }}
+                    style={{
+                      marginRight: 5,
+                      display: '',
+                    }}
                     onClick={async () => {
                       await handleRemove(selectedRowsState);
                       setSelectedRows([]);
@@ -538,13 +521,14 @@ const TableList: React.FC = () => {
                     // @ts-ignore
                     type="primary"
                     shape={'round'}
-                    style={{ marginRight: 5, display: furtherStepVisible }}
+                    style={{
+                      marginRight: 5
+                    }}
                     key="furtherStep"
                     onClick={async () => {
-                      // await handleFurtherStepClick(selectedRowsState);
-                      // setSelectedRows([]);
-                      // actionRef.current?.reloadAndRest?.();
-                      handleFurtherStepModalVisible(true);
+                      await handleFurtherStep(selectedRowsState);
+                      setSelectedRows([]);
+                      actionRef.current?.reloadAndRest?.();
                     }}
                   >
                     安排下一步
@@ -553,21 +537,10 @@ const TableList: React.FC = () => {
                     // @ts-ignore
                     type="primary"
                     shape={'round'}
-                    style={{ marginRight: 5 }}
-                    key="pick-up"
-                    onClick={async () => {
-                      await handlePickUp(selectedRowsState);
-                      setSelectedRows([]);
-                      actionRef.current?.reloadAndRest?.();
+                    style={{
+                      marginRight: 5
+                      // display: checkVisible,
                     }}
-                  >
-                    提交任务
-                  </Button>
-                  <Button
-                    // @ts-ignore
-                    type="primary"
-                    shape={'round'}
-                    style={{ marginRight: 5, display: checkVisible }}
                     key="check"
                     onClick={async () => {
                       await handleCheck(selectedRowsState);
@@ -635,31 +608,6 @@ const TableList: React.FC = () => {
           },
         }}
       />
-      {/* {selectedRowsState?.length > 0 && ( */}
-      {/*  <FooterToolbar */}
-      {/*    extra={ */}
-      {/*      <div> */}
-      {/*        <FormattedMessage id="pages.searchTable.chosen" */}
-      {/*                          defaultMessage="已选择" />{' '} */}
-      {/*        <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '} */}
-      {/*        <FormattedMessage id="pages.searchTable.item" */}
-      {/*                          defaultMessage="项" /> */}
-      {/*        &nbsp;&nbsp; */}
-      {/*      </div> */}
-      {/*    } */}
-      {/*  > */}
-      {/*    <Button */}
-      {/*      onClick={async () => { */}
-      {/*        await handleRemove(selectedRowsState); */}
-      {/*        setSelectedRows([]); */}
-      {/*        actionRef.current?.reloadAndRest?.(); */}
-      {/*      }} */}
-      {/*    > */}
-      {/*      <FormattedMessage id="pages.searchTable.batchDeletion" */}
-      {/*                        defaultMessage="批量删除" /> */}
-      {/*    </Button> */}
-      {/*  </FooterToolbar> */}
-      {/* )} */}
       <ModalForm
         title="导入Excel"
         width="400px"
@@ -675,38 +623,67 @@ const TableList: React.FC = () => {
           }
         }}
       >
+        <ProFormSelect
+          label="处理流程"
+          name="process_id"
+          request={processRequest}
+        />
         <ProFormUploadButton
           label="文件上传"
           width="md"
           name="file"
+          rules={[{required: true, message: "请上传文件！"}]}
           action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           )}
-          fieldProps={{multiple: true}}
+          fieldProps={{ multiple: true }}
         />
       </ModalForm>
+      {/*<ModalForm*/}
+      {/*  title="安排下一步"*/}
+      {/*  width="400px"*/}
+      {/*  visible={createFurtherStepModalVisible}*/}
+      {/*  onVisibleChange={handleFurtherStepModalVisible}*/}
+      {/*  onFinish={async (value) => {*/}
+      {/*    const success = await handleFurtherStep(selectedRowsState, value as { file: any });*/}
+      {/*    setSelectedRows([]);*/}
+      {/*    if (success) {*/}
+      {/*      handleFurtherStepModalVisible(false);*/}
+      {/*      if (actionRef.current) {*/}
+      {/*        actionRef.current.reload();*/}
+      {/*      }*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <ProFormSelect*/}
+      {/*    name="arranged_id"*/}
+      {/*    label="下一步负责人"*/}
+      {/*    request={memberList}*/}
+      {/*    placeholder="请选择"*/}
+      {/*    rules={[{ required: true, message: '请选择！' }]}*/}
+      {/*  />*/}
+      {/*</ModalForm>*/}
       <ModalForm
-        title="安排下一步"
+        title="提交任务"
         width="400px"
-        visible={createFurtherStepModalVisible}
-        onVisibleChange={handleFurtherStepModalVisible}
-        onFinish={async (value) => {
-          const success = await handleFurtherStep(selectedRowsState, value as { file: any });
+        visible={createTaskDoneModalVisible}
+        onVisibleChange={handleTaskDoneModalVisible}
+        onFinish={async (value: { save_path: string }) => {
+          const success = await handleSubmit(selectedRowsState, value);
           setSelectedRows([]);
           if (success) {
-            handleFurtherStepModalVisible(false);
+            handleTaskDoneModalVisible(false);
             if (actionRef.current) {
               actionRef.current.reload();
             }
           }
         }}
       >
-        <ProFormSelect
-          name="arranged_id"
-          label="下一步负责人"
-          request={memberList}
-          placeholder="请选择"
-          rules={[{ required: true, message: '请选择！' }]}
+        <ProFormDatePicker
+          rules={[{ required: true }]}
+          name="save_path"
+          label="存图路径"
+          fieldProps={{format: "MM-DD"}}
         />
       </ModalForm>
       <ModalForm
@@ -760,7 +737,9 @@ const TableList: React.FC = () => {
           label="补发性质"
           name="type"
         />
-        <ProFormText label="补发原因及其他备注" width="md" name="remark" />
+        <ProFormText label="补发原因及其他备注"
+                     width="md"
+                     name="remark" />
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
@@ -773,6 +752,7 @@ const TableList: React.FC = () => {
             }
           }
         }}
+        options={processList}
         onCancel={() => {
           handleUpdateModalVisible(false);
           setCurrentRow(undefined);

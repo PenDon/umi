@@ -1,6 +1,12 @@
 import React from 'react';
 import { Modal } from 'antd';
-import ProForm, { ProFormGroup, ProFormList, ProFormText } from '@ant-design/pro-form';
+import ProForm, {
+  ProFormGroup,
+  ProFormList,
+  ProFormSelect,
+  ProFormText,
+} from '@ant-design/pro-form';
+import { departmentList } from '@/services/ant-design-pro/api';
 
 export type FormValueType = {
   id?: number;
@@ -18,6 +24,16 @@ export type UpdateFormProps = {
   onSubmit: (values: FormValueType) => Promise<void>;
   updateModalVisible: boolean;
   values: Partial<API.Process>;
+};
+const departmentRequest = async () => {
+  const response = await departmentList();
+  let d = [];
+  for (const item in response.data) {
+    d.push({"label": response.data[item], "value": item})
+  }
+
+  // return response.data;
+  return d;
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
@@ -61,6 +77,13 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               ]}
               name="name"
               label="步骤名称"
+            />
+            <ProFormSelect name="category_id"
+                           label="所属部门"
+                           request={departmentRequest} />
+            <ProFormText
+              name="id"
+              hidden={true}
             />
           </ProFormGroup>
         </ProFormList>

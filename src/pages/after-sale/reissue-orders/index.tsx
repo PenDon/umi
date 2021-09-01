@@ -29,7 +29,7 @@ import ProDescriptions from '@ant-design/pro-descriptions';
 // import UpdateForm from './components/UpdateForm';
 import {
   reissueOrders,
-  addReissueOrder, removeReissueOrder,
+  addReissueOrder, removeReissueOrder, reissueOrderToExcel,
 } from '@/services/ant-design-pro/api';
 // import Timestamp from '@/components/Timestamp';
 
@@ -113,6 +113,23 @@ const handleRemove = async (selectedRows: API.ReissueOrderItem[]) => {
   } catch (error) {
     hide();
     message.error('删除失败，请重试');
+    return false;
+  }
+};
+
+const handleToExcel = async (selectedRows: API.ReissueOrderItem[]) => {
+  const hide = message.loading('正在删除');
+  if (!selectedRows) return true;
+  try {
+    await reissueOrderToExcel({
+      ids: selectedRows.map((row) => row.id).join(','),
+    });
+    hide();
+    message.success('成功，即将刷新');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('失败，请重试');
     return false;
   }
 };
@@ -296,10 +313,16 @@ const TableList: React.FC = () => {
             <FormattedMessage id="pages.searchTable.batchDeletion"
                               defaultMessage="批量删除" />
           </Button>
-          {/* <Button type="primary"> */}
-          {/*  <FormattedMessage id="pages.searchTable.batchApproval" */}
-          {/*                    defaultMessage="批量审批" /> */}
-          {/* </Button> */}
+
+           <a type="primary" target='_blank'
+            onClick={async () => {
+              await handleToExcel(selectedRowsState);
+              setSelectedRows([]);
+              actionRef.current?.reloadAndRest?.();
+            }}
+           >
+            导出
+           </a>
         </FooterToolbar>
       )}
       {/*<ModalForm*/}

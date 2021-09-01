@@ -4,7 +4,7 @@ import { request } from 'umi';
 
 // 流程API
 /** 获取流程列表 GET /index.php/api/erp/process/index */
-export async function Process(
+export async function processes(
   params: {
     // query
     /** 当前的页码 */

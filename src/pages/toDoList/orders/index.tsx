@@ -68,10 +68,7 @@ const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
     await updateOrder({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
+    }, {...fields});
     hide();
 
     message.success('配置成功');

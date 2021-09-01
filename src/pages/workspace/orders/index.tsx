@@ -562,6 +562,7 @@ const TableList: React.FC = (props) => {
           </Button>,
         ]}
         // request={orders}
+        params={{ pick_up_member_id: localStorage.getItem("user_id")}}
         request={(params,
                   sort,
                   filter) => {

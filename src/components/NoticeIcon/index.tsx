@@ -133,7 +133,7 @@ const NoticeIconView = () => {
         if (item.read != true) {
           changeReadState(item.id!);
         }
-        window.location.href=`/#/manage/orders?id=${item.order_id}`
+        window.location.href=`/#/workspace/orders?id=${item.order_id}`
       }}
       onClear={() => clearReadState()}
       loading={false}

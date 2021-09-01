@@ -40,31 +40,26 @@
     name: 'admin',
     icon: 'apartment',
     path: '/admin',
+    access: 'canAdmin',
     routes: [
       {
         name: 'users',
-        // icon: 'user',
         path: '/admin/users',
         component: './admin/users',
       },
+      {
+        name: 'departments',
+        path: '/admin/departments',
+        component: './admin/departments',
+      },
     ],
   },
-  // {
-  //   name: 'TableList',
-  //   icon: 'list',
-  //   path: '/table-list',
-  //   component: './TableList',
-  // },
   {
     name: 'manage',
     icon: 'group',
     path: '/manage',
+    access: 'canAdmin',
     routes: [
-      // {
-      //   name: 'manages',
-      //   path: '/admin/users',
-      //   component: './manage/index',
-      // },
       {
         name: 'orders',
         path: '/manage/orders',
@@ -84,17 +79,6 @@
         path: '/manage/process',
         component: './manage/process',
       },
-
-      // {
-      //   name: 'orders',
-      //   path: '/manage/orders',
-      //   component: './manage/orders',
-      // },
-      // {
-      //   name: 'products',
-      //   path: '/manage/products',
-      //   component: './manage/products',
-      // },
     ],
   },
   {
@@ -107,6 +91,36 @@
         // icon: 'user',
         path: '/after-sale/reissue-orders',
         component: './after-sale/reissue-orders',
+      },
+    ],
+  },
+  {
+    name: 'todo',
+    icon: 'project',
+    path: '/todo',
+    routes: [
+      {
+        name: 'orderBatch',
+        // icon: 'user',
+        path: '/todo/order-batch',
+        component: './todo/orderBatch',
+      },
+    ],
+  },
+  {
+    name: 'workspace',
+    icon: 'laptop',
+    path: '/workspace',
+    routes: [
+      {
+        name: 'orderBatch',
+        path: '/workspace/order-batch',
+        component: './workspace/orderBatch',
+      },
+      {
+        name: 'orders',
+        path: '/workspace/orders',
+        component: './workspace/orders',
       },
     ],
   },
