@@ -340,10 +340,11 @@ export async function orderBatch(
 }
 
 /** 修改订单批次 POST /index.php/api/erp/order-batch/update */
-export async function updateOrderBatch(options?: { [key: string]: any }) {
+export async function updateOrderBatch(params?: { [key: string]: any }, data?: {[key: string]: any}) {
   return request<API.OrderBatch>('/index.php/api/erp/order-batch/update', {
     method: 'POST',
-    ...(options || {}),
+    params: params,
+    data: data,
   });
 }
 

@@ -138,7 +138,6 @@ const TableList: React.FC = () => {
         title: '名称',
         dataIndex: 'name',
         sorter: true,
-        search: false,
       },
       {
         title: '存图路径',

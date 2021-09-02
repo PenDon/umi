@@ -11,7 +11,7 @@ export type FormValueType = {
   type?: string;
   time?: string;
   frequency?: string;
-} & Partial<API.RuleListItem>;
+} & Partial<API.OrderBatch>;
 
 export type UpdateFormProps = {
   onCancel: () => void;

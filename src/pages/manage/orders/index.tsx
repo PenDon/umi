@@ -84,8 +84,9 @@ const handleImport = async (fields: { file: any }) => {
  */
 const handleCreateReissueOrder = async (fields: API.ReissueOrderItem) => {
   const hide = message.loading('正在操作');
+
   // @ts-ignore
-  fields.image = fields.image[0].response.data.path;
+  fields.image && (fields.image = fields.image[0].response.data.path);
   try {
     await addReissueOrder({ ...fields });
     hide();

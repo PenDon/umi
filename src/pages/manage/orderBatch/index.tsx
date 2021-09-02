@@ -89,11 +89,7 @@ const handleImport = async (fields: { file: any }) => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateOrderBatch({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
+    await updateOrderBatch({id: fields.id}, {process_id: fields.process_id});
     hide();
 
     message.success('配置成功');
