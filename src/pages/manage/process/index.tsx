@@ -22,9 +22,7 @@ import {
   processes,
 } from '@/services/ant-design-pro/processes';
 import UpdateForm from '@/pages/manage/process/components/UpdateForm';
-import {
-  departmentList,
-} from '@/services/ant-design-pro/api';
+import { departmentRequest } from '@/components/Common';
 
 /**
  * 添加节点
@@ -94,16 +92,7 @@ const handleRemove = async (selectedRows: API.Process[]) => {
   }
 };
 
-const departmentRequest = async () => {
-  const response = await departmentList();
-  let d = [];
-  for (const item in response.data) {
-    d.push({"label": response.data[item], "value": item})
-  }
 
-  // return response.data;
-  return d;
-};
 
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */

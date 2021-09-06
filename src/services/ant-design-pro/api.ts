@@ -1,6 +1,4 @@
 // @ts-ignore
-/* eslint-disable */
-// @ts-ignore
 import { request } from 'umi';
 
 /** 此处后端没有提供注释 GET /index.php/api/notices */
@@ -123,7 +121,6 @@ export async function members(
   };
 }
 
-// @todo 修改为传递数据data
 /** 修改用户 PUT /index.php/api/member/update */
 export async function updateMember(options?: { [key: string]: any }, params?: object, data?: object) {
   return request<API.MemberListItem>('/index.php/api/member/update', {

@@ -248,6 +248,7 @@ const TableList: React.FC = () => {
     <PageContainer>
       <ProTable<API.OrderBatch, API.PageParams>
         headerTitle="订单列表"
+        scroll={{ y: 500 }}
         footer={(data) => {
           return renderOrdersQuantity(data);
         }}

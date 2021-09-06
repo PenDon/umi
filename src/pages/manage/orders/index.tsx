@@ -3,7 +3,6 @@ import {
   Button,
   message,
   Drawer,
-  Timeline,
   Tag, Modal, List,
 } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
@@ -34,10 +33,13 @@ import {
   updateOrder,
   removeOrder,
   importExcel,
-  orders,
-  stepList, addReissueOrder,
+  orders, addReissueOrder,
 } from '@/services/ant-design-pro/api';
 import Timestamp from '@/components/Timestamp';
+import {
+  processRequest, renderTimeLine,
+  stepRequest,
+} from '@/components/Common';
 
 /**
  * 添加节点
@@ -109,6 +111,7 @@ const handleUpdate = async (fields: FormValueType) => {
   try {
     await updateOrder({ id: fields.id }, {
       custom_info: fields.custom_info,
+      operation_remark: fields.operation_remark,
     });
     hide();
 
@@ -143,33 +146,6 @@ const handleRemove = async (selectedRows: API.Order[]) => {
   }
 };
 
-function renderTimeLine(row: API.Order | undefined) {
-  if (row?.batch && row.batch.stepDetails.length !== 0) {
-    const details = row.batch.stepDetails;
-
-    return (
-      <Timeline mode="left">
-        {details.map((detail: any) => {
-          let name = '';
-          if (detail.type == 0) {
-            name = '安排';
-          } else {
-            name = detail.type == 1 ? '提交' : '完成';
-          }
-          return (
-            <Timeline.Item key={detail.id}
-                           label={detail.created_at}>
-              {name}
-              {detail.name} By {detail.username}
-            </Timeline.Item>
-          );
-        })}
-      </Timeline>
-    );
-  }
-  return '-';
-}
-
 function renderListDescription(item: API.OrderOperation) {
   return (
     <List.Item>
@@ -177,8 +153,11 @@ function renderListDescription(item: API.OrderOperation) {
         title={<span>{item.type}</span>}
         description={(
           <div>
-                        <span>
-                          By {item.creator}
+            <div>
+              {item.remark}
+                        </div>
+            <span>
+                           By {item.creator}
                         </span>
             {item.created_at && (
               <Timestamp timestamp={item.created_at} />)}
@@ -202,7 +181,6 @@ const TableList: React.FC = (props) => {
   const [reissueModalVisible, handleReissueModalVisible] = useState<boolean>(false);
 
 
-
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const [recordVisible, handleRecordVisible] = useState<boolean>(false);
@@ -210,25 +188,20 @@ const TableList: React.FC = (props) => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.Order>();
   const [selectedRowsState, setSelectedRows] = useState<API.Order[]>([]);
-  const [id, setId] = useState<string | undefined>(undefined)
-  const [batchId, setBatchId] = useState<string | undefined>(undefined)
+  const [id, setId] = useState<string | undefined>(undefined);
+  const [batchId, setBatchId] = useState<string | undefined>(undefined);
   // @ts-ignore
-  const query = props.location.query
+  const query = props.location.query;
 
-  const stepRequest = async () => {
-    const response = await stepList();
-
-    return response.data;
-  };
   useEffect(() => {
     // @ts-ignore
-    const {id, batch_id} = query
-    setId(id)
-    setBatchId(batch_id)
+    const { id, batch_id } = query;
+    setId(id);
+    setBatchId(batch_id);
     if (actionRef.current) {
       actionRef.current.reload();
     }
-  }, [query])
+  }, [query]);
 
   /** 国际化配置 */
     // const intl = useIntl();
@@ -319,8 +292,24 @@ const TableList: React.FC = (props) => {
         search: false,
 
         //  处理换行
-        render: (dom) => {
-          return <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>;
+        render: (dom, entity) => {
+          let remark: {} | null | undefined = [];
+          if (entity.operations?.length) {
+            remark = entity.operations.map((operation) => {
+              return (<Tag color={'red'}
+              >
+                {operation.remark}
+              </Tag>);
+            });
+          }
+          return (
+            <div>
+              <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>
+              <div>
+                {remark}
+              </div>
+            </div>
+          );
         },
       },
       {
@@ -350,7 +339,7 @@ const TableList: React.FC = (props) => {
             const status = batch.status;
             if (status == 3) {
               return <Tag color="green">已完成{text}</Tag>; //  审核通过
-                                                         //  =>
+                                                         // =>
                                                          // 完成
             }
 
@@ -641,6 +630,11 @@ const TableList: React.FC = (props) => {
           }
         }}
       >
+        <ProFormSelect
+          label="处理流程"
+          name="process_id"
+          request={processRequest}
+        />
         <ProFormUploadButton
           label="文件上传"
           width="md"
@@ -665,16 +659,16 @@ const TableList: React.FC = (props) => {
             // }
           }
         }}
-        modalProps={{destroyOnClose: true}}
+        modalProps={{ destroyOnClose: true }}
       >
         <ProFormText
-          initialValue={"1"}
-          name={"has_order"}
+          initialValue={'1'}
+          name={'has_order'}
           hidden={true}
         />
         <ProFormText
           initialValue={currentRow?.id}
-          name={"order_id"}
+          name={'order_id'}
           hidden={true}
         />
         <ProFormSelect
@@ -796,7 +790,7 @@ const TableList: React.FC = (props) => {
           setShowDetail(false);
         }}
         closable={false}
-        footer={renderTimeLine(currentRow)}
+        footer={renderTimeLine(currentRow?.batch)}
       >
         {currentRow?.id && (
           <ProDescriptions<API.Order>

@@ -3,7 +3,6 @@ import {
   Button,
   message,
   Drawer,
-  Timeline,
   Tag,
 } from 'antd';
 import React, { useState, useRef } from 'react';
@@ -25,7 +24,6 @@ import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
-import { StatisticCard } from '@ant-design/pro-card';
 import {
   importExcel,
   orderBatch,
@@ -35,12 +33,14 @@ import {
   batchFurtherStep,
   batchSubmit,
   batchCheck,
-  stepList,
+
 } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
-import { processes } from '@/services/ant-design-pro/processes';
+import {
+  processRequest, renderOrdersQuantity, renderTimeLine,
+  stepRequest,
+} from '@/components/Common';
 
-const { Operation } = StatisticCard;
 
 /**
  * 添加节点
@@ -67,7 +67,7 @@ const handleAdd = async (fields: API.OrderBatch) => {
  * @param fields
  */
 const handleImport = async (fields: { file: any }) => {
-  console.log(fields)
+  console.log(fields);
   const hide = message.loading('正在上传');
   try {
     await importExcel({ ...fields });
@@ -89,7 +89,7 @@ const handleImport = async (fields: { file: any }) => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateOrderBatch({id: fields.id}, {process_id: fields.process_id});
+    await updateOrderBatch({ id: fields.id }, { process_id: fields.process_id });
     hide();
 
     message.success('配置成功');
@@ -169,84 +169,6 @@ const handleCheck = async (selectedRows: API.OrderBatch[]) => {
   }
 };
 
-function renderTimeLine(row: API.OrderBatch | undefined) {
-  if (row?.stepDetails && row.stepDetails.length !== 0) {
-    const details = row.stepDetails;
-
-    return (
-      <Timeline mode="left">
-        {details.map((detail: any) => {
-          let name = '';
-          switch(parseInt(detail.type)) {
-            case 0:
-              name = '安排';
-              break;
-            case 1:
-              name = '接取';
-              break;
-            case 2:
-              name = '提交';
-              break;
-            case 3:
-              name = '完成';
-              break;
-            default:
-
-          }
-          return (
-            <Timeline.Item key={detail.id}
-                           label={detail.created_at}>
-              {name}
-              {detail.name}任务 By <Tag color={'blue'}
-                                    key={'username'}>{detail.username}</Tag>
-            </Timeline.Item>
-          );
-        })}
-      </Timeline>
-    );
-  }
-  return '-';
-}
-
-function renderOrdersQuantity(data: readonly API.OrderBatch[]) {
-  let sum = 0;
-  for (const d of data) {
-    if (d.quantity) {
-      sum += d.quantity;
-    }
-  }
-  return (
-    <StatisticCard.Group>
-      <StatisticCard
-        statistic={{
-          title: '总单量',
-          value: sum,
-        }}
-      />
-      <Operation>=</Operation>
-      <StatisticCard
-        statistic={{
-          title: '散单',
-          value: "xxx",
-        }}
-      />
-      <Operation>+</Operation>
-      <StatisticCard
-        statistic={{
-          title: 'XXX单',
-          value: "xxx",
-        }}
-      />
-      <Operation>+</Operation>
-      <StatisticCard
-        statistic={{
-          title: 'YYY单',
-          value: "xxx",
-        }}
-      />
-    </StatisticCard.Group>
-  );
-}
 
 /**
  * 批量安排下一步
@@ -257,7 +179,7 @@ const handleFurtherStep = async (selectedRows: API.OrderBatch[]) => {
   if (!selectedRows) return true;
   try {
     await batchFurtherStep({
-      ids: selectedRows.map((row) => row.id).join(',')
+      ids: selectedRows.map((row) => row.id).join(','),
     });
     hide();
     message.success('操作成功，即将刷新');
@@ -267,24 +189,6 @@ const handleFurtherStep = async (selectedRows: API.OrderBatch[]) => {
     message.error('操作失败，请重试');
     return false;
   }
-};
-
-const stepRequest = async () => {
-  const response = await stepList();
-
-  return response.data;
-};
-
-const processRequest = async () => {
-  const response = await processes({}, {}, {});
-  let a = [{}]
-  if (response.data)
-    a = response.data.map((item: API.Process) => {
-     return {label: item.name, value: item.id}
-   })
-
-
-  return a;
 };
 
 const TableList: React.FC = () => {
@@ -297,7 +201,9 @@ const TableList: React.FC = () => {
   const [createExcelModalVisible, handleExcelModalVisible] = useState<boolean>(false);
 
   /** 安排下一步窗口的弹窗 */
-  // const [createFurtherStepModalVisible, handleFurtherStepModalVisible] = useState<boolean>(false);
+  // const [createFurtherStepModalVisible,
+  // handleFurtherStepModalVisible] =
+  // useState<boolean>(false);
 
   /** 提交任务窗口的弹窗 */
   const [createTaskDoneModalVisible, handleTaskDoneModalVisible] = useState<boolean>(false);
@@ -318,171 +224,171 @@ const TableList: React.FC = () => {
   /** 国际化配置 */
 
   const columns: ProColumns<API.OrderBatch>[] = [
-      {
-        title: '序号',
-        dataIndex: 'id',
-        sorter: true,
-        render: (dom, entity) => {
-          return (
-            <a
-              onClick={() => {
-                setCurrentRow(entity);
-                setShowDetail(true);
-              }}
-            >
-              {dom}
-            </a>
-          );
-        },
-        search: false,
+    {
+      title: '序号',
+      dataIndex: 'id',
+      sorter: true,
+      render: (dom, entity) => {
+        return (
+          <a
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {dom}
+          </a>
+        );
       },
-      {
-        title: '名称',
-        dataIndex: 'name',
-        sorter: true,
+      search: false,
+    },
+    {
+      title: '名称',
+      dataIndex: 'name',
+      sorter: true,
+    },
+    {
+      title: '存图路径',
+      dataIndex: 'save_path',
+      search: false,
+    },
+    {
+      title: '单量',
+      dataIndex: 'quantity',
+      sorter: true,
+      search: false,
+    },
+    {
+      title: '处理流程',
+      dataIndex: 'process_id',
+      valueType: 'select',
+      request: async () => {
+        if (!processList.length) {
+          const d = await processRequest();
+          setProcessList(d);
+          return d;
+        } else {
+          return processList;
+        }
+
       },
-      {
-        title: '存图路径',
-        dataIndex: 'save_path',
-        search: false,
-      },
-      {
-        title: '单量',
-        dataIndex: 'quantity',
-        sorter: true,
-        search: false,
-      },
-      {
-        title: '处理流程',
-        dataIndex: 'process_id',
-        valueType: 'select',
-        request : async () => {
-          if (!processList.length) {
-            const d = await processRequest();
-            setProcessList(d);
-            return d;
-          } else {
-            return processList;
+    },
+    {
+      title: '进度',
+      dataIndex: ['step', 'name'],
+      renderText: (text: any, record) => {
+        if (!text) {
+          return <Tag color={'yellow'}>没有安排</Tag>;
+        }
+        // eslint-disable-next-line no-restricted-syntax
+        const status = record.status;
+
+        if (status !== undefined) {
+
+          if (status == 3) {
+            return <Tag color="green">已完成{text}</Tag>; //  审核通过
+                                                       // =>
+                                                       // 完成
           }
 
-        },
-      },
-      {
-        title: '进度',
-        dataIndex: ['step', 'name'],
-        renderText: (text: any, record) => {
-          if (!text) {
-            return <Tag color={'yellow'}>没有安排</Tag>;
-          }
-          // eslint-disable-next-line no-restricted-syntax
-          const status = record.status;
-
-          if (status !== undefined) {
-
-            if (status == 3) {
-              return <Tag color="green">已完成{text}</Tag>; //  审核通过
-                                                         //  =>
-                                                         // 完成
-            }
-
-            if (status == 2) {
-              return <Tag color="blue">审核{text}中</Tag>;
-            }
-
-            if (status == 1) {
-              return <Tag color="cyan">{text}任务已接取</Tag>; // 任务已被接取
-            }
-
-            if (status == 0) {
-              return <Tag color="red">{text}任务待接取</Tag>; //  安排了人
-                                                      // =>
-                                                      // 正在
-            }
+          if (status == 2) {
+            return <Tag color="blue">审核{text}中</Tag>;
           }
 
-          return '无';
-        },
-        renderFormItem: () => {
-          return (
-            <div>
-              <ProFormSelect name="step_id"
-                             params={{}}
-                             request={stepRequest} />
-              <ProFormSelect name="status"
-                             options={[
-                               {
-                                 value: 0,
-                                 label: '待接取',
-                               },
-                               {
-                                 value: 1,
-                                 label: '已接取',
-                               },
-                               {
-                                 value: 2,
-                                 label: '审核中',
-                               },
-                               {
-                                 value: 3,
-                                 label: '完成',
-                               },
-                             ]}
-              />
-            </div>
-          );
-        },
-      },
+          if (status == 1) {
+            return <Tag color="cyan">{text}任务已接取</Tag>; // 任务已被接取
+          }
 
-      {
-        title: '创建人',
-        dataIndex: 'creator',
-        search: false,
-        hideInTable: true,
-      },
-      {
-        title: '创建日期',
-        dataIndex: 'created_at',
-        sorter: true,
-        renderText: (text: number) => {
-          return text * 1000;
-        },
-        valueType: 'dateTime',
-        search: false,
-        hideInTable: true,
-      },
-      {
-        title: '备注',
-        dataIndex: 'remark',
-        search: false,
-        hideInTable: true,
-      },
-      {
-        title: '操作',
-        dataIndex: 'option',
-        valueType: 'option',
-        render: (_, record) => {
-          return [
-            <Button type={'link'}
-                    href={`/#/manage/orders?batch_id=${record.id}`}
-                    key={'redirect'}
-            >跳转至订单详情</Button>,
-            <Button type={'link'}
-                    key={'update'}
-                    onClick={() => {
-                      handleUpdateModalVisible(true);
-                      setCurrentRow(record);
-                    }}
-            >编辑</Button>,
-          ];
+          if (status == 0) {
+            return <Tag color="red">{text}任务待接取</Tag>; //  安排了人
+            // =>
+            // 正在
+          }
+        }
 
-        },
+        return '无';
       },
-    ];
+      renderFormItem: () => {
+        return (
+          <div>
+            <ProFormSelect name="step_id"
+                           params={{}}
+                           request={stepRequest} />
+            <ProFormSelect name="status"
+                           options={[
+                             {
+                               value: 0,
+                               label: '待接取',
+                             },
+                             {
+                               value: 1,
+                               label: '已接取',
+                             },
+                             {
+                               value: 2,
+                               label: '审核中',
+                             },
+                             {
+                               value: 3,
+                               label: '完成',
+                             },
+                           ]}
+            />
+          </div>
+        );
+      },
+    },
+
+    {
+      title: '创建人',
+      dataIndex: 'creator',
+      search: false,
+      hideInTable: true,
+    },
+    {
+      title: '创建日期',
+      dataIndex: 'created_at',
+      sorter: true,
+      renderText: (text: number) => {
+        return text * 1000;
+      },
+      valueType: 'dateTime',
+      search: false,
+      hideInTable: true,
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      search: false,
+      hideInTable: true,
+    },
+    {
+      title: '操作',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => {
+        return [
+          <Button type={'link'}
+                  href={`/#/manage/orders?batch_id=${record.id}`}
+                  key={'redirect'}
+          >跳转至订单详情</Button>,
+          <Button type={'link'}
+                  key={'update'}
+                  onClick={() => {
+                    handleUpdateModalVisible(true);
+                    setCurrentRow(record);
+                  }}
+          >编辑</Button>,
+        ];
+
+      },
+    },
+  ];
   return (
     <PageContainer>
       <ProTable<API.OrderBatch, API.PageParams>
         headerTitle="订单列表"
-        scroll={{y: 500}}
+        scroll={{ y: 500 }}
         footer={(data) => {
           return renderOrdersQuantity(data);
         }}
@@ -518,7 +424,7 @@ const TableList: React.FC = () => {
                     type="primary"
                     shape={'round'}
                     style={{
-                      marginRight: 5
+                      marginRight: 5,
                     }}
                     key="furtherStep"
                     onClick={async () => {
@@ -534,7 +440,7 @@ const TableList: React.FC = () => {
                     type="primary"
                     shape={'round'}
                     style={{
-                      marginRight: 5
+                      marginRight: 5,
                       // display: checkVisible,
                     }}
                     key="check"
@@ -628,7 +534,7 @@ const TableList: React.FC = () => {
           label="文件上传"
           width="md"
           name="file"
-          rules={[{required: true, message: "请上传文件！"}]}
+          rules={[{ required: true, message: '请上传文件！' }]}
           action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           )}
@@ -679,7 +585,7 @@ const TableList: React.FC = () => {
           rules={[{ required: true }]}
           name="save_path"
           label="存图路径"
-          fieldProps={{format: "MM-DD"}}
+          fieldProps={{ format: 'MM-DD' }}
         />
       </ModalForm>
       <ModalForm

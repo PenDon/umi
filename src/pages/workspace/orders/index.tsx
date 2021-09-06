@@ -3,7 +3,6 @@ import {
   Button,
   message,
   Drawer,
-  Timeline,
   Tag, Modal, List,
 } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
@@ -35,9 +34,13 @@ import {
   removeOrder,
   importExcel,
   orders,
-  stepList, addReissueOrder,
+  addReissueOrder,
 } from '@/services/ant-design-pro/api';
 import Timestamp from '@/components/Timestamp';
+import {
+  renderTimeLine,
+  stepRequest,
+} from '@/components/Common';
 
 /**
  * 添加节点
@@ -108,6 +111,7 @@ const handleUpdate = async (fields: FormValueType) => {
   try {
     await updateOrder({ id: fields.id }, {
       custom_info: fields.custom_info,
+      operation_remark: fields.operation_remark,
     });
     hide();
 
@@ -142,33 +146,6 @@ const handleRemove = async (selectedRows: API.Order[]) => {
   }
 };
 
-function renderTimeLine(row: API.Order | undefined) {
-  if (row?.batch && row.batch.stepDetails.length !== 0) {
-    const details = row.batch.stepDetails;
-
-    return (
-      <Timeline mode="left">
-        {details.map((detail: any) => {
-          let name = '';
-          if (detail.type == 0) {
-            name = '安排';
-          } else {
-            name = detail.type == 1 ? '提交' : '完成';
-          }
-          return (
-            <Timeline.Item key={detail.id}
-                           label={detail.created_at}>
-              {name}
-              {detail.name} By {detail.username}
-            </Timeline.Item>
-          );
-        })}
-      </Timeline>
-    );
-  }
-  return '-';
-}
-
 function renderListDescription(item: API.OrderOperation) {
   return (
     <List.Item>
@@ -176,6 +153,9 @@ function renderListDescription(item: API.OrderOperation) {
         title={<span>{item.type}</span>}
         description={(
           <div>
+            <div>
+              {item.remark}
+            </div>
                         <span>
                           By {item.creator}
                         </span>
@@ -214,11 +194,6 @@ const TableList: React.FC = (props) => {
   // @ts-ignore
   const query = props.location.query
 
-  const stepRequest = async () => {
-    const response = await stepList();
-
-    return response.data;
-  };
   useEffect(() => {
     // @ts-ignore
     const {id, batch_id} = query
@@ -318,8 +293,24 @@ const TableList: React.FC = (props) => {
         search: false,
 
         //  处理换行
-        render: (dom) => {
-          return <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>;
+        render: (dom, entity) => {
+          let remark: {} | null | undefined = [];
+          if (entity.operations?.length) {
+            remark = entity.operations.map((operation) => {
+              return (<Tag color={'red'}
+              >
+                {operation.remark}
+              </Tag>);
+            });
+          }
+          return (
+            <div>
+              <span style={{ whiteSpace: 'pre-line' }}>{dom}</span>
+              <div>
+                {remark}
+              </div>
+            </div>
+          );
         },
       },
       {
@@ -796,7 +787,7 @@ const TableList: React.FC = (props) => {
           setShowDetail(false);
         }}
         closable={false}
-        footer={renderTimeLine(currentRow)}
+        footer={renderTimeLine(currentRow?.batch)}
       >
         {currentRow?.id && (
           <ProDescriptions<API.Order>

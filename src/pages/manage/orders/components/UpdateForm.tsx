@@ -3,7 +3,9 @@ import {
   ModalForm, ProFormText, ProFormTextArea,
 } from '@ant-design/pro-form';
 
-export type FormValueType = Partial<API.Order>;
+export type FormValueType = Partial<API.Order> & {
+  operation_remark: string,
+};
 
 export type UpdateFormProps = {
   onCancel: () => void;
@@ -32,15 +34,15 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
 
     >
       <ProFormTextArea
-        rules={[
-          {
-            required: true,
-            message: '必填项',
-          },
-        ]}
         label="定制信息"
         width="md"
         name="custom_info"
+        disabled={true}
+      />
+      <ProFormTextArea
+        label="修改备注"
+        width="md"
+        name="operation_remark"
       />
       <ProFormText
         width="md"

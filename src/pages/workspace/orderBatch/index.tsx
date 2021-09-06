@@ -20,13 +20,11 @@ import {
 } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import { StatisticCard } from '@ant-design/pro-card';
 import {
   orderBatch,
   batchSubmit,
 } from '@/services/ant-design-pro/api';
-
-const { Operation } = StatisticCard;
+import { renderOrdersQuantity } from '@/components/Common';
 
 
 /**
@@ -53,47 +51,6 @@ const handleSubmit = async (selectedRows: API.OrderBatch[], data?: { save_path: 
   }
 };
 
-function renderOrdersQuantity(data: readonly API.OrderBatch[]) {
-  let sum = 0;
-  for (const d of data) {
-    if (d.quantity) {
-      sum += d.quantity;
-    }
-  }
-  return (
-    <StatisticCard.Group>
-      <StatisticCard
-        statistic={{
-          title: '总单量',
-          value: sum,
-        }}
-      />
-      <Operation>=</Operation>
-      <StatisticCard
-        statistic={{
-          title: '散单',
-          value: "xxx",
-        }}
-      />
-      <Operation>+</Operation>
-      <StatisticCard
-        statistic={{
-          title: 'XXX单',
-          value: "xxx",
-        }}
-      />
-      <Operation>+</Operation>
-      <StatisticCard
-        statistic={{
-          title: 'YYY单',
-          value: "xxx",
-        }}
-      />
-    </StatisticCard.Group>
-  );
-}
-
-
 const TableList: React.FC = () => {
 
   /** 提交任务窗口的弹窗 */
@@ -105,11 +62,6 @@ const TableList: React.FC = () => {
   const [currentRow, setCurrentRow] = useState<API.OrderBatch>();
   const [selectedRowsState, setSelectedRows] = useState<API.OrderBatch[]>([]);
 
-  // const orderBatchRequest = async () => {
-  //   const response = await orderBatch({pick_up_member_id: localStorage.getItem("user_id")}, {}, {});
-  //
-  //   return response.data;
-  // };
 
   // @ts-ignore
   // @ts-ignore
