@@ -6,9 +6,9 @@ export async function getNotices(params: object, options?: { [key: string]: any 
   const response = await request<API.NoticeIconList>('/index.php/api/common/notification/index', {
     method: 'GET',
     ...(options || {}),
-    params: {...params}
+    params: { ...params },
   });
-  return {data: response.data?.items};
+  return { data: response.data?.items };
 }
 
 //  规则API
@@ -127,7 +127,7 @@ export async function updateMember(options?: { [key: string]: any }, params?: ob
     method: 'PUT',
     ...(options || {}),
     params: params,
-    data: data
+    data: data,
   });
 }
 
@@ -137,7 +137,7 @@ export async function addMember({ options, data }: { options?: { [p: string]: an
   return request<API.MemberListItem>('/index.php/api/passport/register', {
     method: 'POST',
     ...(options || {}),
-    data: data
+    data: data,
   });
 }
 
@@ -270,8 +270,8 @@ export async function departmentList() {
 export async function updateOrder(params: object, data: object, options?: { [key: string]: any }) {
   return request<API.Order>('/index.php/api/erp/order/update', {
     method: 'PUT',
-    params: {...params},
-    data: {...data},
+    params: { ...params },
+    data: { ...data },
     ...(options || {}),
   });
 }
@@ -337,7 +337,7 @@ export async function orderBatch(
 }
 
 /** 修改订单批次 POST /index.php/api/erp/order-batch/update */
-export async function updateOrderBatch(params?: { [key: string]: any }, data?: {[key: string]: any}) {
+export async function updateOrderBatch(params?: { [key: string]: any }, data?: { [key: string]: any }) {
   return request<API.OrderBatch>('/index.php/api/erp/order-batch/update', {
     method: 'POST',
     params: params,
@@ -368,8 +368,9 @@ export async function batchFurtherStep(params?: object) {
     data: { ...params },
   });
 }
+
 /** 员工领取任务接口 POST /index.php/api/erp/order-batch/pick-up */
-export async function batchPickUp(params: { ids: string}) {
+export async function batchPickUp(params: { ids: string }) {
   return request<Record<string, any>>('/index.php/api/erp/order-batch/pick-up', {
     method: 'POST',
     params: { ...params },
@@ -437,8 +438,8 @@ export async function updateDepartment(options?: { [key: string]: any }, params?
   return request<API.Department>('/index.php/api/erp/department/update', {
     method: 'POST',
     ...(options || {}),
-    params: {...params},
-    data: {...data},
+    params: { ...params },
+    data: { ...data },
   });
 }
 

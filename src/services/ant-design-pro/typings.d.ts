@@ -21,6 +21,7 @@ declare namespace API {
       type?: number;
       // tags?: { key?: string; label?: string }[];
       id: number;
+      category_id?: number;
       type_formatted?: string;
       mobile_phone?: string;
     };

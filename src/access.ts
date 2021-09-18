@@ -4,6 +4,6 @@
 export default function access(initialState: { currentUser?: API.CurrentUser | undefined }) {
   const { currentUser } = initialState || {};
   return {
-    canAdmin: currentUser && currentUser.data?.type === 1,
+    canAdmin: currentUser && (currentUser.data?.type === 1 || currentUser.data?.category_id === 7),
   };
 }
