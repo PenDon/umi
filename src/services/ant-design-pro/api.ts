@@ -459,3 +459,39 @@ export async function removeDepartment(params: { ids: string }) {
   });
 }
 
+// CostExcel
+/** 获取订单列表 GET /index.php/api/cost/cost-excel/index */
+export async function costExcels(
+  params: API.CostExcel & {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  sorter: object,
+  options?: { [key: string]: any },
+) {
+  // 前端排序字段处理
+  let sortObj = {};
+  if (sorter) {
+    for (let key in sorter) {
+      sortObj['sort'] = sorter[key] == 'ascend' ? key : '-' + key;
+      break;
+    }
+  }
+  const response = await request<API.CostExcelList>('/index.php/api/cost/cost-excel/index', {
+    method: 'GET',
+    params: {
+      ...params,
+      ...sortObj,
+    },
+    ...(options || {}),
+  });
+  return {
+    data: response?.data?.items,
+    success: response.success,
+    total: response.data?._meta.totalCount,
+  };
+}
+

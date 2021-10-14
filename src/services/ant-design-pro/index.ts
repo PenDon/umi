@@ -6,9 +6,11 @@ import * as api from './api';
 // import * as login from './login';
 import * as process from './processes';
 import * as notification from './notification';
+import * as costRule from './cost-rules';
 export default {
   api,
   // login,
   process,
+  costRule,
   notification,
 };

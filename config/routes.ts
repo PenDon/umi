@@ -108,6 +108,25 @@
     ],
   },
   {
+    name: 'cost',
+    icon: 'project',
+    path: '/cost',
+    routes: [
+      {
+        name: 'costRule',
+        // icon: 'user',
+        path: '/cost/cost-rule',
+        component: './cost/cost-rule',
+      },
+      {
+        name: 'excel',
+        // icon: 'user',
+        path: '/cost/excel',
+        component: './cost/excel',
+      },
+    ],
+  },
+  {
     name: 'workspace',
     icon: 'laptop',
     path: '/workspace',

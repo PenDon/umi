@@ -320,4 +320,52 @@ declare namespace API {
     updated_at?: number;
     updater?: string;
   };
+
+  // cost rule
+  type CostRuleList = {
+    success: boolean;
+    data?: {
+      items: CostRule[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type CostRule = {
+    id?: string;
+    sku?: string;
+    initial_price?: number;
+    has_beads?: boolean;
+    bead_price?: number;
+    flag?: boolean;
+    ruleValue?: CostRuleValue[];
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  };
+
+  type CostRuleValue = {
+    id?: string;
+    rule_id?: string;
+    keyword?: string;
+    bead_price?: number;
+    extra_cost?: number;
+  };
+
+  type CostExcelList = {
+    success: boolean;
+    data?: {
+      items: CostExcel[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type CostExcel = {
+    id?: string;
+    file_path?: string;
+    file_name?: string;
+    created_at?: number;
+  };
 }
