@@ -128,10 +128,14 @@ const TableList: React.FC = () => {
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
+  /** 珠子单价是否展示 */
+  const [showBeadPrice, setShowBeadPrice] = useState<boolean>(true);
+
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.CostRule>();
   const [selectedRowsState, setSelectedRows] = useState<API.CostRule[]>([]);
 
+  // @ts-ignore
   /** 国际化配置 */
   // const intl = useIntl();
 
@@ -159,11 +163,11 @@ const TableList: React.FC = () => {
       search: false,
       renderText: (ruleValues: API.CostRuleValue[]) => {
         if (ruleValues.length) {
-          console.log(ruleValues)
 
           let text = ruleValues.map(value => {
-            return (<div>
+            return (<div key={value.id}>
               <span>【{value.keyword}】 成本增加 {value.extra_cost}</span>
+                {value.bead_price != 0 && <span>【{value.keyword}珠子/桃心】 单价 {value.bead_price}</span>}
               </div>
             )
           });
@@ -180,13 +184,7 @@ const TableList: React.FC = () => {
         search: false,
       },
       {
-        title: '珠子单价(不区分颜色)',
-        dataIndex: 'bead_price',
-        search: false,
-        hideInTable: true,
-      },
-      {
-        title: '是否带珠子',
+        title: '是否带珠子/桃心',
         dataIndex: 'has_beads',
         search: false,
         renderText: text => {
@@ -196,6 +194,19 @@ const TableList: React.FC = () => {
             return <CloseOutlined />
           }
         }
+      },
+      {
+        title: '珠子单价(不区分颜色)',
+        dataIndex: 'bead_price',
+        search: false,
+        // hideInTable: true,
+        //ts-ignore
+        renderText: (text) => {
+          if (text == 0) {
+            return '无';
+          }
+          return text;
+        },
       },
       {
         title: '是否区分珠子颜色',
@@ -343,6 +354,9 @@ const TableList: React.FC = () => {
         title="新建成本规则"
         width="640px"
         visible={createModalVisible}
+        modalProps={{
+          destroyOnClose: true,
+        }}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {
           const success = await handleAdd(value as API.CostRule);
@@ -384,6 +398,15 @@ const TableList: React.FC = () => {
             0: '否',
           }}
           placeholder="请选择"
+          fieldProps={{
+            onChange: value => {
+              if (value == 0) {
+                setShowBeadPrice(false);
+              } else {
+                setShowBeadPrice(true);
+              }
+            }
+          }}
         />
         <ProFormSelect
           name="flag"
@@ -393,8 +416,18 @@ const TableList: React.FC = () => {
             0: '否',
           }}
           placeholder="请选择"
+          fieldProps={{
+            onChange: value => {
+              if (value == 1) {
+                setShowBeadPrice(false);
+              } else {
+                setShowBeadPrice(true);
+              }
+            }
+          }}
         />
         <ProFormText
+          hidden={!showBeadPrice}
           label="珠子单价(不区分珠子颜色)"
           width="md"
           name="bead_price"

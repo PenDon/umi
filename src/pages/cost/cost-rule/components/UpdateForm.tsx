@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'antd';
 import ProForm, {
   ProFormGroup,
@@ -22,6 +22,8 @@ export type UpdateFormProps = {
   updateModalVisible: boolean;
   values: Partial<API.CostRule>;
 };
+/** 珠子单价是否展示 */
+const [showBeadPrice, setShowBeadPrice] = useState<boolean>(true);
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   return (
@@ -60,10 +62,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           label="初始价格"
           rules={[{ required: true, message: '必填项！' }]}
         />
-        <ProFormText
-          name="bead_price"
-          label="珠子单价(不区分珠子颜色)"
-        />
+
         <ProFormSelect
           name="has_beads"
           label="是否带珠子"
@@ -72,6 +71,15 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             0: '否',
           }}
           placeholder="请选择"
+          fieldProps={{
+            onChange: value => {
+              if (value == 0) {
+                setShowBeadPrice(false);
+              } else {
+                setShowBeadPrice(true);
+              }
+            }
+          }}
         />
         <ProFormSelect
           name="flag"
@@ -81,6 +89,20 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             0: '否',
           }}
           placeholder="请选择"
+          fieldProps={{
+            onChange: value => {
+              if (value == 1) {
+                setShowBeadPrice(false);
+              } else {
+                setShowBeadPrice(true);
+              }
+            }
+          }}
+        />
+        <ProFormText
+          hidden={!showBeadPrice}
+          name="bead_price"
+          label="珠子单价(不区分珠子颜色)"
         />
         <ProFormText name="remark" label="备注" />
         <ProFormText name="id" hidden={true} />
