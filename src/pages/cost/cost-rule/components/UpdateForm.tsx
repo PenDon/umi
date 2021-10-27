@@ -23,9 +23,13 @@ export type UpdateFormProps = {
   values: Partial<API.CostRule>;
 };
 /** 珠子单价是否展示 */
-const [showBeadPrice, setShowBeadPrice] = useState<boolean>(true);
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+  /** 是否带珠子 */
+  const [hasBeads, setHasBeads] = useState<boolean>(true);
+
+  /** 是否区分珠子颜色 */
+  const [flag, setFlag] = useState<boolean>(false);
   return (
     <Modal
       width={640}
@@ -74,9 +78,9 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           fieldProps={{
             onChange: value => {
               if (value == 0) {
-                setShowBeadPrice(false);
+                setHasBeads(false);
               } else {
-                setShowBeadPrice(true);
+                setHasBeads(true);
               }
             }
           }}
@@ -84,6 +88,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         <ProFormSelect
           name="flag"
           label="是否区分珠子颜色"
+          hidden={!hasBeads}
           valueEnum={{
             1: '是',
             0: '否',
@@ -92,15 +97,15 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           fieldProps={{
             onChange: value => {
               if (value == 1) {
-                setShowBeadPrice(false);
+                setFlag(true);
               } else {
-                setShowBeadPrice(true);
+                setFlag(false);
               }
             }
           }}
         />
         <ProFormText
-          hidden={!showBeadPrice}
+          hidden={!hasBeads || flag}
           name="bead_price"
           label="珠子单价(不区分珠子颜色)"
         />
@@ -132,6 +137,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             <ProFormText
               name="bead_price"
               label="珠子单价(区分珠子颜色)"
+              hidden={!hasBeads || !flag}
               placeholder="请输入珠子单价(区分珠子颜色)"
             />
             <ProFormText

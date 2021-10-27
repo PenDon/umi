@@ -128,8 +128,11 @@ const TableList: React.FC = () => {
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  /** 珠子单价是否展示 */
-  const [showBeadPrice, setShowBeadPrice] = useState<boolean>(true);
+  /** 是否带珠子 */
+  const [hasBeads, setHasBeads] = useState<boolean>(true);
+
+  /** 是否区分珠子颜色 */
+  const [flag, setFlag] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.CostRule>();
@@ -401,15 +404,16 @@ const TableList: React.FC = () => {
           fieldProps={{
             onChange: value => {
               if (value == 0) {
-                setShowBeadPrice(false);
+                setHasBeads(false);
               } else {
-                setShowBeadPrice(true);
+                setHasBeads(true);
               }
             }
           }}
         />
         <ProFormSelect
           name="flag"
+          hidden={!hasBeads}
           label="是否区分珠子颜色"
           valueEnum={{
             1: '是',
@@ -419,15 +423,15 @@ const TableList: React.FC = () => {
           fieldProps={{
             onChange: value => {
               if (value == 1) {
-                setShowBeadPrice(false);
+                setFlag(true);
               } else {
-                setShowBeadPrice(true);
+                setFlag(false);
               }
             }
           }}
         />
         <ProFormText
-          hidden={!showBeadPrice}
+          hidden={!hasBeads || flag}
           label="珠子单价(不区分珠子颜色)"
           width="md"
           name="bead_price"
@@ -457,6 +461,7 @@ const TableList: React.FC = () => {
             />
             <ProFormText
               name="bead_price"
+              hidden={!hasBeads || !flag}
               label="珠子单价(区分颜色)"
               placeholder="请输入珠子单价(区分颜色)！"
             />
