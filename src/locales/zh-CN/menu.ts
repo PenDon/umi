@@ -35,6 +35,7 @@ export default {
   'menu.workspace.orders': '订单详情',
   'menu.todo.orderBatch': '订单批次任务列表',
   'menu.cost.costRule': '成本计算规则',
+  'menu.cost.productCost': '独立站产品报价表',
   'menu.cost.excel': '成本计算结果',
   'menu.manage': '基础管理页',
   'menu.toDoList': '待办事项',

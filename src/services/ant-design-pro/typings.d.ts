@@ -368,4 +368,30 @@ declare namespace API {
     file_name?: string;
     created_at?: number;
   };
+
+  // 产品报价
+  type ProductCostList = {
+    success: boolean;
+    data?: {
+      items: ProductCost[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type ProductCost = {
+    id: string;
+    image?: string;
+    sku?: string;
+    material?: string;
+    color?: string;
+    standards?: string;
+    cost?: string;
+    bead_cost?: string;
+    remark?: string;
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  };
 }

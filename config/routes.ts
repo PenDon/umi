@@ -52,6 +52,7 @@
         path: '/admin/departments',
         component: './admin/departments',
       },
+
     ],
   },
   {
@@ -123,6 +124,12 @@
         // icon: 'user',
         path: '/cost/excel',
         component: './cost/excel',
+      },
+      {
+        name: 'productCost',
+        // icon: 'user',
+        path: '/cost/product-cost',
+        component: './cost/product-cost',
       },
     ],
   },
