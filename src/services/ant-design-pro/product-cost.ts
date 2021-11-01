@@ -36,13 +36,13 @@ export async function productCost(
   };
 }
 
-/** 修改独立站产品报价 PUT /index.php/api/erp/product-cost/update */
+/** 修改独立站产品报价 POST /index.php/api/erp/product-cost/update */
 export async function updateProductCost(
   params: { id: string | undefined },
   options?: { [p: string]: any },
 ) {
   return request<API.ProductCost>('/index.php/api/erp/product-cost/update', {
-    method: 'PUT',
+    method: 'POST',
     params: { ...params },
     data: { ...(options || {}) },
   });

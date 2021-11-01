@@ -38,9 +38,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         id: props.values.id,
       }}
 
-
     >
-      <ProFormTextArea
+      <ProFormText
         rules={[
           {
             required: true,
@@ -63,15 +62,16 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         action={'/index.php/api/file/uploading?access_token='.concat(
           localStorage.getItem('access_token') as string,
         ).concat('&key=image')}
-        // fieldProps={{ multiple: true }}
+        fieldProps={{data: {'key': 'image', 'generate_thumbnail': 1, 'thumbnail_size': '100x100'}}}
       />
+      // todo use ProFormTextArea
       <ProFormText label="材质"
                    width="md"
                    name="material" />
       <ProFormText label="颜色"
                    width="md"
                    name="color" />
-      <ProFormText label="规格"
+      <ProFormTextArea label="规格"
                    width="md"
                    name="standards" />
       <ProFormText label="独立站成本(生产成本)"

@@ -41,7 +41,7 @@ const handleAdd = async (fields: API.ProductCost) => {
   const hide = message.loading('正在添加');
   try {
     // @ts-ignore
-    fields.image = fields.image[0].response.data.path;
+    fields.image = fields.image[0].response.data.thumbnail.path;
     await addProductCost({ ...fields });
     hide();
     message.success('添加成功');
@@ -62,7 +62,7 @@ const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
     // @ts-ignore
-    fields.image = fields.image[0].response.data.path;
+    fields.image = fields.image[0].response.data.thumbnail.path;
     await updateProductCost({ id: fields.id }, {...fields
     });
     hide();
@@ -137,9 +137,14 @@ const TableList: React.FC = () => {
       title: '图片',
       dataIndex: 'image',
       search: false,
-      renderText: (text) => {
+      renderText: (text: string) => {
+        const src = text.replace('_thumb', '')
         return (<Image src={text}
-                       width={50}  alt={''}/>);
+                       width={100}  alt={''}
+                       preview={{
+                         src: src,
+                       }}
+        />);
       },
     },
     {
@@ -299,7 +304,7 @@ const TableList: React.FC = () => {
           action={'/index.php/api/file/uploading?access_token='.concat(
             localStorage.getItem('access_token') as string,
           ).concat('&key=image')}
-          // fieldProps={{ multiple: true }}
+          fieldProps={{data: {'key': 'image', 'generate_thumbnail': 1, 'thumbnail_size': '100x100'}}}
         />
         <ProFormText label="材质"
                      width="md"
