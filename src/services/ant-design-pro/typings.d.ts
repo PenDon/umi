@@ -6,6 +6,14 @@ declare namespace API {
     success: boolean;
   }
 
+  type Response<T> = {
+    success: boolean;
+    data?: {
+      items: T[]
+    };
+    error?: ErrorItem[];
+  }
+
   type ErrorItem = {
     field?: string;
     message?: any;
@@ -228,14 +236,14 @@ declare namespace API {
     // type?: string;
   };
 
-  type ErrorResponse = {
-    /** 业务约定的错误码 */
-    errorCode: string;
-    /** 业务上的错误信息 */
-    errorMessage?: string;
-    /** 业务上的请求是否成功 */
-    success?: boolean;
-  };
+  // type ErrorResponse = {
+  //   /** 业务约定的错误码 */
+  //   errorCode: string;
+  //   /** 业务上的错误信息 */
+  //   errorMessage?: string;
+  //   /** 业务上的请求是否成功 */
+  //   success?: boolean;
+  // };
 
   type NoticeIconList = {
     data?: {
@@ -321,7 +329,7 @@ declare namespace API {
     updater?: string;
   };
 
-  // cost rule
+  // 成本计算规则
   type CostRuleList = {
     success: boolean;
     data?: {
@@ -353,6 +361,7 @@ declare namespace API {
     extra_cost?: number;
   };
 
+  // 成本计算结果Excel
   type CostExcelList = {
     success: boolean;
     data?: {
@@ -393,5 +402,55 @@ declare namespace API {
     creator?: string;
     updated_at?: number;
     updater?: string;
+  };
+
+  // 邮箱账户
+  type MailAccountList = {
+    success: boolean;
+    data?: {
+      items: MailAccount[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type MailAccount = {
+    id: string;
+    account: string;
+    remark?: string;
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  };
+
+  // 邮件模板与模板关键词
+  type MailTemplateList = {
+    success: boolean;
+    data?: {
+      items: MailTemplate[];
+      _links: Links;
+      _meta: Pagination;
+    };
+  };
+
+  type MailTemplate = {
+    id?: string;
+    name?: string;
+    subject?: string;
+    body?: string;
+    keywords?: Keyword[];
+    remark?: string;
+    created_at?: number;
+    creator?: string;
+    updated_at?: number;
+    updater?: string;
+  };
+
+  type Keyword = {
+    name?: string;
+    id?: number;
+    template_id: number;
+    remark?: string;
   };
 }

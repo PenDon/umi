@@ -3,7 +3,6 @@ import {
   Button,
   message,
   Drawer,
-  Image,
 } from 'antd';
 import React, { useState, useRef } from 'react';
 // @ts-ignore
@@ -21,28 +20,25 @@ import ProTable from '@ant-design/pro-table';
 import {
   ModalForm,
   ProFormText,
-  ProFormUploadButton,
 } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import UpdateForm from './components/UpdateForm';
-import {
-  addProductCost, productCost, removeProductCost,
-  updateProductCost,
-} from '@/services/ant-design-pro/product-cost';
 import { FormValueType } from '@/pages/cost/product-cost/components/UpdateForm';
+import {
+  addMailAccount, mailAccounts, removeMailAccount,
+  updateMailAccount,
+} from '@/services/ant-design-pro/mail-account';
 
 /**
  * 添加节点
  *
  * @param fields
  */
-const handleAdd = async (fields: API.ProductCost) => {
+const handleAdd = async (fields: API.MailAccount) => {
   const hide = message.loading('正在添加');
   try {
-    // @ts-ignore
-    fields.image = fields.image[0].response.data.thumbnail.path;
-    await addProductCost({ ...fields });
+    await addMailAccount({ ...fields });
     hide();
     message.success('添加成功');
     return true;
@@ -61,9 +57,7 @@ const handleAdd = async (fields: API.ProductCost) => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    // @ts-ignore
-    fields.image = fields.image[0].response.data.thumbnail.path;
-    await updateProductCost({ id: fields.id }, {...fields
+    await updateMailAccount({ id: fields.id }, {...fields
     });
     hide();
 
@@ -81,11 +75,11 @@ const handleUpdate = async (fields: FormValueType) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.ProductCost[]) => {
+const handleRemove = async (selectedRows: API.MailAccount[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeProductCost({
+    await removeMailAccount({
       ids: selectedRows.map((row) => row.id).join(','),
     });
     hide();
@@ -107,16 +101,13 @@ const TableList: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.ProductCost>();
-  const [selectedRowsState, setSelectedRows] = useState<API.ProductCost[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.MailAccount>();
+  const [selectedRowsState, setSelectedRows] = useState<API.MailAccount[]>([]);
 
-  const columns: ProColumns<API.ProductCost>[] = [
+  const columns: ProColumns<API.MailAccount>[] = [
     {
-      title: '平台SKU',
-      dataIndex: 'sku',
-      sorter: true,
-      fixed: 'left',
-      width: 140,
+      title: '邮箱账户',
+      dataIndex: 'account',
       render: (dom, entity) => {
         return (
           <div>
@@ -126,50 +117,11 @@ const TableList: React.FC = () => {
                 setShowDetail(true);
               }}
             >
-              {entity.sku}
+              {entity.account}
             </a>
           </div>
         );
       },
-    },
-    {
-      title: '图片',
-      dataIndex: 'image',
-      search: false,
-      renderText: (text: string) => {
-        const src = text.replace('_thumb', '')
-        return (<Image src={text}
-                       width={100}  alt={''}
-                       preview={{
-                         src: src,
-                       }}
-        />);
-      },
-    },
-    {
-      title: '材质',
-      dataIndex: 'material',
-      search: false,
-    },
-    {
-      title: '颜色',
-      dataIndex: 'color',
-      search: false,
-    },
-    {
-      title: '规格',
-      dataIndex: 'standards',
-      search: false,
-    },
-    {
-      title: '独立站价格(生产成本)',
-      dataIndex: 'cost',
-      search: false,
-    },
-    {
-      title: '如加珠子/片单价',
-      dataIndex: 'bead_cost',
-      search: false,
     },
     {
       title: '备注',
@@ -178,13 +130,13 @@ const TableList: React.FC = () => {
       // hideInTable: true,
     },
     {
-      title: '更新人',
+      title: '创建人',
       dataIndex: 'creator',
       search: false,
       // hideInTable: true,
     },
     {
-      title: '更新时间',
+      title: '创建时间',
       dataIndex: 'created_at',
       sorter: true,
       renderText: (text: number) => {
@@ -215,7 +167,7 @@ const TableList: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<API.ProductCost, API.PageParams>
-        headerTitle="产品报价表"
+        headerTitle="邮箱账户列表"
         scroll={{ x: 1500 }}
         actionRef={actionRef}
         rowKey="id"
@@ -232,11 +184,10 @@ const TableList: React.FC = () => {
             }}
           >
             <PlusOutlined />
-            新建产品报价
+            新建邮箱账户
           </Button>,
         ]}
-        // request={orders}
-        request={productCost}
+        request={mailAccounts}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -270,13 +221,13 @@ const TableList: React.FC = () => {
         </FooterToolbar>
       )}
       <ModalForm
-        title="新建产品报价表"
+        title="新建邮箱账户"
         width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         modalProps={{ destroyOnClose: true }}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.ProductCost);
+          const success = await handleAdd(value as API.MailAccount);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {
@@ -292,34 +243,21 @@ const TableList: React.FC = () => {
               message: '必填项',
             },
           ]}
-          label="平台SKU"
+          label="邮箱账户"
           width="md"
-          name="sku"
+          name="account"
         />
-        <ProFormUploadButton
-          label="图片"
+        <ProFormText.Password
+          rules={[
+            {
+              required: true,
+              message: '密码为必填项！',
+            },
+          ]}
+          label="邮箱账户密码"
           width="md"
-          name="image"
-          action={'/index.php/api/file/uploading?access_token='.concat(
-            localStorage.getItem('access_token') as string,
-          ).concat('&key=image')}
-          fieldProps={{data: {'key': 'image', 'generate_thumbnail': 1, 'thumbnail_size': '100x100'}}}
+          name="pwd"
         />
-        <ProFormText label="材质"
-                     width="md"
-                     name="material" />
-        <ProFormText label="颜色"
-                     width="md"
-                     name="color" />
-        <ProFormText label="规格"
-                     width="md"
-                     name="standards" />
-        <ProFormText label="独立站成本(生产成本)"
-                     width="md"
-                     name="cost" />
-        <ProFormText label="如加珠子/片单价"
-                     width="md"
-                     name="bead_cost" />
         <ProFormText label="备注"
                      width="md"
                      name="remark" />
@@ -356,7 +294,7 @@ const TableList: React.FC = () => {
         {currentRow?.id && (
           <ProDescriptions<API.Order>
             column={2}
-            title={currentRow?.sku}
+            title={currentRow?.account}
             request={async () => ({
               data: currentRow || {},
             })}

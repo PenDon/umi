@@ -52,7 +52,6 @@ export async function updateCostRule(
   params: { id: string | undefined },
   options?: { [p: string]: any },
 ) {
-  console.log(params);
   return request<API.CostRule>('/index.php/api/cost/cost-rule/update', {
     method: 'PUT',
     params: { ...params },

@@ -190,7 +190,6 @@ const TableList: React.FC = () => {
         // valueEnum: departmentList,
         valueType: 'select',
         request : async () => {
-          console.log(departmentList)
           if (!departmentList.length) {
             const d = await departmentRequest();
             setDepartmentList(d);

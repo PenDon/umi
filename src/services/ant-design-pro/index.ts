@@ -8,6 +8,7 @@ import * as process from './processes';
 import * as notification from './notification';
 import * as costRule from './cost-rules';
 import * as productCost from './product-cost';
+import * as mailAccount from './mail-account';
 export default {
   api,
   // login,
@@ -15,4 +16,5 @@ export default {
   costRule,
   notification,
   productCost,
+  mailAccount,
 };
