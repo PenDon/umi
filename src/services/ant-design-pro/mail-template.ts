@@ -74,7 +74,7 @@ export async function removeMailTemplate(params: { ids: string }) {
 
 /** 邮件模板列表 GET /index.php/api/erp/mail-template/list */
 export async function listMailTemplate() {
-  return request<API.Response<API.MailTemplate>>('/index.php/api/erp/mail-template/list', {
+  return request<API.ListResponse<API.MailTemplate>>('/index.php/api/erp/mail-template/list', {
     method: 'GET',
   });
 }

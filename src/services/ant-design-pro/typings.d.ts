@@ -6,7 +6,7 @@ declare namespace API {
     success: boolean;
   }
 
-  type Response<T> = {
+  type ListResponse<T> = {
     success: boolean;
     data?: {
       items: T[]

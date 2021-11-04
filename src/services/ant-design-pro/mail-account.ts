@@ -69,7 +69,7 @@ export async function removeMailAccount(params: { ids: string }) {
 
 /** 邮箱账户列表 GET /index.php/api/erp/addresser/list */
 export async function listMailAccount() {
-  return request<API.Response<API.MailAccount>>('/index.php/api/erp/addresser/list', {
+  return request<API.ListResponse<API.MailAccount>>('/index.php/api/erp/addresser/list', {
     method: 'GET',
   });
 }
