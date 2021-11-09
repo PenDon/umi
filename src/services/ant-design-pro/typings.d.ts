@@ -6,14 +6,6 @@ declare namespace API {
     success: boolean;
   }
 
-  type ListResponse<T> = {
-    success: boolean;
-    data?: {
-      items: T[]
-    };
-    error?: ErrorItem[];
-  }
-
   type ErrorItem = {
     field?: string;
     message?: any;
@@ -453,4 +445,33 @@ declare namespace API {
     template_id: number;
     remark?: string;
   };
+
+  // 通用列表响应
+  type ListResponse<T> = {
+    success: boolean;
+    data?: {
+      items: T[],
+      _links: Links;
+      _meta: Pagination;
+    };
+    error?: ErrorItem[];
+  }
+
+  // 前台产品
+  type FrontendProduct = {
+    id?: number;
+    name?: string;
+    category: number;
+    brand?: string;
+    origin_place?: string;
+    certification?: string;
+    model_number?: string;
+    min_order_quantity?: string;
+    price?: string;
+    package_details?: string;
+    delivery_time?: string;
+    payment?: string;
+    supply_ability?: string;
+    description?: string;
+  }
 }
