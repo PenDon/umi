@@ -38,13 +38,13 @@ export async function products(
 
 /** 修改前台产品 POST /index.php/api/product/default/update */
 export async function updateProduct(
-  params: { id: string | undefined },
-  options?: { [p: string]: any },
+  params: { id: number | undefined },
+  data?: { [p: string]: any },
 ) {
   return request<API.FrontendProduct>('/index.php/api/product/default/update', {
     method: 'POST',
     params: { ...params },
-    data: { ...(options || {}) },
+    data: { ...(data || {}) },
   });
 }
 
@@ -61,6 +61,13 @@ export async function removeProduct(params: { ids: string }) {
   return request<Record<string, any>>('/index.php/api/product/default/delete', {
     method: 'POST',
     params: { ...params },
+  });
+}
+
+/** 前台产品类别列表 GET /index.php/api/product/default/list-category */
+export async function listCategory() {
+  return request<any>('/index.php/api/product/default/list-category', {
+    method: 'GET'
   });
 }
 

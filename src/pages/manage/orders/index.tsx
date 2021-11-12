@@ -37,8 +37,8 @@ import {
 } from '@/services/ant-design-pro/api';
 import Timestamp from '@/components/Timestamp';
 import {
-  processRequest, renderTimeLine,
-  stepRequest,
+  processesRequest, renderTimeLine,
+  stepsRequest,
 } from '@/components/Common';
 
 /**
@@ -364,7 +364,7 @@ const TableList: React.FC = (props) => {
             <div>
               <ProFormSelect name="step"
                              params={{}}
-                             request={stepRequest} />
+                             request={stepsRequest} />
               <ProFormSelect name="status"
                              options={[
                                {
@@ -633,7 +633,7 @@ const TableList: React.FC = (props) => {
         <ProFormSelect
           label="处理流程"
           name="process_id"
-          request={processRequest}
+          request={processesRequest}
         />
         <ProFormUploadButton
           label="文件上传"

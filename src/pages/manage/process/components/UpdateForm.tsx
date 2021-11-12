@@ -6,7 +6,7 @@ import ProForm, {
   ProFormSelect,
   ProFormText,
 } from '@ant-design/pro-form';
-import { departmentRequest } from '@/components/Common';
+import { departmentsRequest } from '@/components/Common';
 
 export type FormValueType = {
   id?: number;
@@ -70,7 +70,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             />
             <ProFormSelect name="category_id"
                            label="所属部门"
-                           request={departmentRequest} />
+                           request={departmentsRequest} />
             <ProFormText
               name="id"
               hidden={true}

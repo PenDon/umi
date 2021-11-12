@@ -37,8 +37,8 @@ import {
 } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
 import {
-  processRequest, renderOrdersQuantity, renderTimeLine,
-  stepRequest,
+  processesRequest, renderOrdersQuantity, renderTimeLine,
+  stepsRequest,
 } from '@/components/Common';
 
 
@@ -264,7 +264,7 @@ const TableList: React.FC = () => {
       valueType: 'select',
       request: async () => {
         if (!processList.length) {
-          const d = await processRequest();
+          const d = await processesRequest();
           setProcessList(d);
           return d;
         } else {
@@ -313,7 +313,7 @@ const TableList: React.FC = () => {
           <div>
             <ProFormSelect name="step_id"
                            params={{}}
-                           request={stepRequest} />
+                           request={stepsRequest} />
             <ProFormSelect name="status"
                            options={[
                              {
@@ -528,7 +528,7 @@ const TableList: React.FC = () => {
         <ProFormSelect
           label="处理流程"
           name="process_id"
-          request={processRequest}
+          request={processesRequest}
         />
         <ProFormUploadButton
           label="文件上传"

@@ -17,7 +17,6 @@ export type UpdateFormProps = {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  console.log(props.departmentList)
 
   return (
     <Modal

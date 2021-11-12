@@ -170,6 +170,23 @@
     ],
   },
   {
+    name: 'frontend',
+    icon: 'laptop',
+    path: '/frontend',
+    routes: [
+      {
+        name: 'product',
+        path: '/frontend/product',
+        component: './frontend/product',
+      },
+      // {
+      //   name: 'orders',
+      //   path: '/workspace/orders',
+      //   component: './workspace/orders',
+      // },
+    ],
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },

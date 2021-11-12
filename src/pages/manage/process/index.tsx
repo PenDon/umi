@@ -22,7 +22,7 @@ import {
   processes,
 } from '@/services/ant-design-pro/processes';
 import UpdateForm from '@/pages/manage/process/components/UpdateForm';
-import { departmentRequest } from '@/components/Common';
+import { departmentsRequest } from '@/components/Common';
 
 /**
  * 添加节点
@@ -276,7 +276,7 @@ const TableList: React.FC = () => {
             />
             <ProFormSelect name="category_id"
                            label="所属部门"
-                           request={departmentRequest} />
+                           request={departmentsRequest} />
           </ProFormGroup>
         </ProFormList>
 

@@ -39,7 +39,7 @@ import {
 import Timestamp from '@/components/Timestamp';
 import {
   renderTimeLine,
-  stepRequest,
+  stepsRequest,
 } from '@/components/Common';
 
 /**
@@ -365,7 +365,7 @@ const TableList: React.FC = (props) => {
             <div>
               <ProFormSelect name="step"
                              params={{}}
-                             request={stepRequest} />
+                             request={stepsRequest} />
               <ProFormSelect name="status"
                              options={[
                                {

@@ -32,6 +32,8 @@ export default {
   'menu.cost': '订单成本',
   'menu.mail': '邮件批处理',
   'menu.workspace': '我的任务',
+  'menu.frontend': '前台模块管理',
+  'menu.frontend.product': '产品管理',
   'menu.workspace.orderBatch': '订单批次任务',
   'menu.workspace.orders': '订单详情',
   'menu.todo.orderBatch': '订单批次任务列表',
