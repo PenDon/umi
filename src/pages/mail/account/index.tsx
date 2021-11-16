@@ -24,7 +24,7 @@ import {
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import UpdateForm from './components/UpdateForm';
-import { FormValueType } from '@/pages/cost/product-cost/components/UpdateForm';
+import { FormValueType } from './components/UpdateForm';
 import {
   addMailAccount, mailAccounts, removeMailAccount,
   updateMailAccount,
@@ -166,7 +166,7 @@ const TableList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.ProductCost, API.PageParams>
+      <ProTable<API.MailAccount, API.PageParams>
         headerTitle="邮箱账户列表"
         scroll={{ x: 1500 }}
         actionRef={actionRef}

@@ -462,7 +462,8 @@ declare namespace API {
     id?: number;
     name?: string;
     images: FrontendProductImage[];
-    category: FrontendProductCategory;
+    category_name: string;
+    category_id: number;
     brand?: string;
     origin_place?: string;
     certification?: string;
@@ -480,6 +481,7 @@ declare namespace API {
   type FrontendProductCategory = {
     id: number;
     name: string;
+    products:FrontendProduct[];
   }
   // 前台产品图片
   type FrontendProductImage = {

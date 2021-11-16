@@ -21,7 +21,7 @@ import ProTable from '@ant-design/pro-table';
 import ProForm, {
   ModalForm,
   ProFormText,
-  ProFormSelect, ProFormUploadButton,
+  ProFormSelect,
 } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -412,10 +412,6 @@ const TableList: React.FC = () => {
         <ProFormText label="月供应能力"
                      width="md"
                      name="supply_ability" />
-
-
-
-
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
@@ -434,6 +430,7 @@ const TableList: React.FC = () => {
         }}
         updateModalVisible={updateModalVisible}
         values={currentRow || {}}
+        categories={categories}
       />
       <Drawer
         width={600}

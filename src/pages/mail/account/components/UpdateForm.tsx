@@ -17,7 +17,7 @@ export type UpdateFormProps = {
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   return (<ModalForm
-      title="修改产品报价"
+      title="修改邮箱账户"
       width="400px"
       visible={props.updateModalVisible}
       onFinish={props.onSubmit}
@@ -57,6 +57,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <ProFormText label="备注"
                    width="md"
                    name="remark" />
+      <ProFormText label="id"
+                   hidden={true}
+                   width="md"
+                   name="id" />
     </ModalForm>
   );
 };

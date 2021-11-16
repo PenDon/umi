@@ -4,7 +4,7 @@ import {
 } from '@/services/ant-design-pro/api';
 import { processes } from '@/services/ant-design-pro/processes';
 import { StatisticCard } from '@ant-design/pro-card';
-import React, { useState } from 'react';
+import React from 'react';
 import { Tag, Timeline } from 'antd';
 import { listCategory } from '@/services/ant-design-pro/frontend-product';
 import { ProFormUploadButton } from '@ant-design/pro-form';
@@ -71,19 +71,20 @@ export type CustomImageUploadProps = {
   width: number | "sm" | "md" | "xl" | "xs" | "lg" | undefined;
   action: string;
   listType: UploadListType;
+  fieldList?: any[];
 };
 
 export const CustomImageUpload: React.FC<CustomImageUploadProps> = (props) => {
-  const [value, setValue] = useState<string>('')
   return (<ProFormUploadButton
     fieldProps={{multiple: props.multiple, listType: props.listType}}
     label={props.label}
     name={props.name}
+    fileList={props.fieldList}
     width={props.width}
     action={props.action}
     onChange={(info) => {
       if (info.file.status === 'done') {
-        console.log(info)
+        // console.log(info)
       }
     }}
   />);

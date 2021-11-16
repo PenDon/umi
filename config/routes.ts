@@ -134,25 +134,6 @@
     ],
   },
   {
-    name: 'mail',
-    icon: 'project',
-    path: '/mail',
-    routes: [
-      {
-        name: 'account',
-        // icon: 'user',
-        path: '/mail/account',
-        component: './mail/account',
-      },
-      {
-        name: 'template',
-        // icon: 'user',
-        path: '/mail/template',
-        component: './mail/template',
-      },
-    ],
-  },
-  {
     name: 'workspace',
     icon: 'laptop',
     path: '/workspace',
@@ -166,6 +147,23 @@
         name: 'orders',
         path: '/workspace/orders',
         component: './workspace/orders',
+      },
+    ],
+  },
+  {
+    name: 'mail',
+    icon: 'project',
+    path: '/mail',
+    routes: [
+      {
+        name: 'account',
+        path: '/mail/account',
+        component: './mail/account',
+      },
+      {
+        name: 'template',
+        path: '/mail/template',
+        component: './mail/template',
       },
     ],
   },
