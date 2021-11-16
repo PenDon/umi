@@ -1,7 +1,7 @@
 import { request } from 'umi';
 
 // 前台产品API
-/** 获取前台产品 GET /index.php/api/product/default/index */
+/** 获取前台产品 GET /index.php/api/frontend/product/index */
 export async function products(
   params: {
     // query
@@ -21,7 +21,7 @@ export async function products(
       break;
     }
   }
-  const response = await request<API.ListResponse<API.FrontendProduct>>('/index.php/api/product/default/index', {
+  const response = await request<API.ListResponse<API.FrontendProduct>>('/index.php/api/frontend/product/index', {
     method: 'GET',
     params: {
       ...params,
@@ -36,37 +36,37 @@ export async function products(
   };
 }
 
-/** 修改前台产品 POST /index.php/api/product/default/update */
+/** 修改前台产品 POST /index.php/api/frontend/product/update */
 export async function updateProduct(
   params: { id: number | undefined },
   data?: { [p: string]: any },
 ) {
-  return request<API.FrontendProduct>('/index.php/api/product/default/update', {
+  return request<API.FrontendProduct>('/index.php/api/frontend/product/update', {
     method: 'POST',
     params: { ...params },
     data: { ...(data || {}) },
   });
 }
 
-/** 新建前台产品 POST /index.php/api/product/default/create */
+/** 新建前台产品 POST /index.php/api/frontend/product/create */
 export async function addProduct(params?: object) {
-  return request<API.FrontendProduct>('/index.php/api/product/default/create', {
+  return request<API.FrontendProduct>('/index.php/api/frontend/product/create', {
     method: 'POST',
     data: { ...params },
   });
 }
 
-/** 删除前台产品 POST /index.php/api/product/default/delete */
+/** 删除前台产品 POST /index.php/api/frontend/product/delete */
 export async function removeProduct(params: { ids: string }) {
-  return request<Record<string, any>>('/index.php/api/product/default/delete', {
+  return request<Record<string, any>>('/index.php/api/frontend/product/delete', {
     method: 'POST',
     params: { ...params },
   });
 }
 
-/** 前台产品类别列表 GET /index.php/api/product/default/list-category */
+/** 前台产品类别列表 GET /index.php/api/frontend/product/list-category */
 export async function listCategory() {
-  return request<any>('/index.php/api/product/default/list-category', {
+  return request<any>('/index.php/api/frontend/product/list-category', {
     method: 'GET'
   });
 }
